@@ -8,16 +8,35 @@ namespace Nrk.HttpRequester
 {
     public interface IHttpClientBuilder
     {
+        /// <summary>
+        /// Sets the number of milliseconds to wait before the request times out.
+        /// </summary>
         IHttpClientBuilder WithTimeout(TimeSpan timeout);
 
+        /// <summary>
+        /// Sets a DelegatingHandler.
+        /// Can be reused to set several different Handlers in a pipeline.
+        /// </summary>
         IHttpClientBuilder WithHandler(DelegatingHandler handler);
 
+        /// <summary>
+        /// Sets the CacheHandler
+        /// </summary>
         IHttpClientBuilder WithCacheHandler(DelegatingHandler cacheHandler);
 
+        /// <summary>
+        /// Sets Default HttpRequestHeaders
+        /// </summary>
         IHttpClientBuilder WithDefaultRequestHeaders(Dictionary<string, string> headers);
 
+        /// <summary>
+        /// Sets ConnectionLeaseTimeout in milliseconds on the <see cref="ServicePoint"/> for the baseUrl.
+        /// </summary>
         IHttpClientBuilder WithConnectionLeaseTimeout(int connectionLeaseTimeout);
 
+        /// <summary>
+        /// Creates the <see cref="HttpClient"/>
+        /// </summary>
         IHttpClient Create();
     }
 
@@ -63,8 +82,6 @@ namespace Nrk.HttpRequester
                 return this;
             }
 
-            // ConnectionLeaseTimeout is the number of milliseconds after which an active ServicePoint connection is closed.
-            // Ref. http://byterot.blogspot.no/2016/07/singleton-httpclient-dns.html
             public IHttpClientBuilder WithConnectionLeaseTimeout(int connectionLeaseTimeout)
             {
                 _connectionLeaseTimeout = connectionLeaseTimeout;
