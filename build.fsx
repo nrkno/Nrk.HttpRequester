@@ -14,7 +14,7 @@ let projectReferences = !! "./source/**/*.csproj"
                         -- "./source/Nrk.HttpRequester.UnitTests/*.csproj"
 let projectName = "NRK.HttpRequester"
 let description = "Library for sending Http Requests, including a fluent interface for creating HttpClient instances"
-let version = "1.0.0"
+let version = environVarOrDefault "version" "1.0.0"
 let commitHash = Information.getCurrentSHA1(".")
 
 Target "Clean" (fun _ ->
