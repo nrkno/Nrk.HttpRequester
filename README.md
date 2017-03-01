@@ -1,3 +1,5 @@
+[![NuGet](https://img.shields.io/nuget/v/NRK.HttpRequester.svg)](https://www.nuget.org/packages/NRK.HttpRequester/)
+[![Build status](https://ci.appveyor.com/api/projects/status/x69p1i51fwscr9nn/branch/master?svg=true)](https://ci.appveyor.com/project/NRKOpensource/nrk-httprequester/branch/master)
 # Nrk.HttpRequester
 Library for sending Http Requests, including a fluent interface for creating HttpClient instances
 
