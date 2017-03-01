@@ -5,7 +5,6 @@
   build_script:
     build.cmd
   test: off
-
 # For master only:
 -
   branches:
