@@ -1,7 +1,17 @@
-assembly_info:
-  patch: false
-build_script:
-  build.cmd
-test: off
-deploy_script:
-  build.cmd "PublishNugetPackage" nugetKey=%nugetKey%
+# CI steps for all branches:
+-
+  version: 1.0.{build}
+  assembly_info:
+    patch: false
+  build_script:
+    build.cmd version=%APPVEYOR_BUILD_VERSION%
+  test: off
+
+# For master only:
+-
+  branches:
+    only:
+      - master
+
+  deploy_script:
+    build.cmd "PublishNugetPackage" -st nugetKey=%nugetKey% version=%APPVEYOR_BUILD_VERSION%
