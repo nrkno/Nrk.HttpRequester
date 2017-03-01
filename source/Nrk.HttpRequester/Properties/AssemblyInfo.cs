@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyInformationalVersionAttribute("1.0.0")]
 [assembly: AssemblyFileVersionAttribute("1.0.0")]
 [assembly: GuidAttribute("d51e7a23-73d5-49a1-be63-f73e432e9ab3")]
-[assembly: AssemblyMetadataAttribute("githash","a6a4b42132c0e867545408d5e149a624f1958252")]
+[assembly: AssemblyMetadataAttribute("githash","df607ccdd20d7d6946fc93bc382c4734a81a3be5")]
 namespace System {
     internal static class AssemblyVersionInformation {
         internal const System.String AssemblyTitle = "NRK.HttpRequester";
@@ -19,6 +19,6 @@ namespace System {
         internal const System.String AssemblyInformationalVersion = "1.0.0";
         internal const System.String AssemblyFileVersion = "1.0.0";
         internal const System.String Guid = "d51e7a23-73d5-49a1-be63-f73e432e9ab3";
-        internal const System.String AssemblyMetadata_githash = "a6a4b42132c0e867545408d5e149a624f1958252";
+        internal const System.String AssemblyMetadata_githash = "df607ccdd20d7d6946fc93bc382c4734a81a3be5";
     }
 }
