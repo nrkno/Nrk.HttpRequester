@@ -13,5 +13,6 @@
   version: 1.0.{build}
   build_script:
     build.cmd version=%APPVEYOR_BUILD_VERSION%
+  test: off
   deploy_script:
     build.cmd "PublishNugetPackage" -st nugetKey=%nugetKey% version=%APPVEYOR_BUILD_VERSION%
