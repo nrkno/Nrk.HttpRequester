@@ -12,6 +12,7 @@ namespace Nrk.HttpRequester.IntegrationTests
     {
         private readonly IDisposable _webApp;
         private const string Url = "http://localhost:9001";
+
         public WebRequesterIntegrationTests()
         {
             _webApp = WebApp.Start<Startup>(Url);

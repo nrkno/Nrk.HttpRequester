@@ -15,7 +15,7 @@ namespace Nrk.HttpRequester.IntegrationTests.TestServer
             {
                 var delay = (int)parameters.ms;
                 Thread.Sleep(delay);
-                return $"Finished sleeping for{parameters.ms}ms";
+                return $"Finished sleeping for {parameters.ms}ms";
             };
 
             Get["/headers"] = _ =>
