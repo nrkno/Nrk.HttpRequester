@@ -13,8 +13,7 @@ namespace Nrk.HttpRequester.IntegrationTests.TestServer
 
             Get["/delay/{ms:int}"] = parameters =>
             {
-                var delay = (int)parameters.ms;
-                Thread.Sleep(delay);
+                Thread.Sleep(parameters.ms);
                 return $"Finished sleeping for {parameters.ms}ms";
             };
 
