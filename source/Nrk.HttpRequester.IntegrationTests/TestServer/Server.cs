@@ -1,6 +1,8 @@
 ﻿using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using Nancy;
+using Nancy.Extensions;
 using Owin;
 
 namespace Nrk.HttpRequester.IntegrationTests.TestServer
@@ -10,6 +12,20 @@ namespace Nrk.HttpRequester.IntegrationTests.TestServer
         public ServerModule()
         {
             Get["/"] = _ => "success";
+
+            Put["/"] = _ => "success";
+
+            Put["/headers"] = _ => 
+            {
+                var headers = Request.Headers.ToArray();
+                return Response.AsJson(headers);
+            };
+
+            Put["/content"] = _ =>
+            {
+                var body = Request.Body;
+                return body.AsString();
+            };
 
             Get["/delay/{ms:int}"] = parameters =>
             {

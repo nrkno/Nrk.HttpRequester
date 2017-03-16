@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Owin.Hosting;
 using Nrk.HttpRequester.IntegrationTests.TestServer;
@@ -61,6 +62,54 @@ namespace Nrk.HttpRequester.IntegrationTests
 
             // Assert
             response.Contains("fakeHeader").ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task PutDataAsync_ShouldGetResponseFromServer()
+        {
+            // Arrange
+            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
+            var webRequester = new WebRequester(httpClient);
+
+            // Act
+            var response = await webRequester.PutDataAsync("", "", "", new StringContent("test"));
+
+            // Assert
+            response.IsSuccessStatusCode.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task PutDataAsync_ShouldSetAuthorizationHeader()
+        {
+            // Arrange
+            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
+            var webRequester = new WebRequester(httpClient);
+
+            var content = new StringContent("");
+            const string authorizationScheme = "bearer";
+            const string accessToken = "accessToken";
+            // Act
+            var response = await webRequester.PutDataAsync("/headers", authorizationScheme, accessToken, content);
+
+            // Assert
+            response.RequestMessage.Headers.Authorization.Scheme.ShouldBe(authorizationScheme);
+            response.RequestMessage.Headers.Authorization.Parameter.ShouldBe(accessToken);
+        }
+
+        [Fact]
+        public async Task PutDataAsync_ShouldSetContent()
+        {
+            // Arrange
+            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
+            var webRequester = new WebRequester(httpClient);
+
+            const string exampleContent = "Sample content";
+            // Act
+            var response = await webRequester.PutDataAsync("/content", "", "", new StringContent(exampleContent));
+
+            // Assert
+            var actualContent = await response.Content.ReadAsStringAsync();
+            actualContent.ShouldBe(exampleContent);
         }
 
         public void Dispose()
