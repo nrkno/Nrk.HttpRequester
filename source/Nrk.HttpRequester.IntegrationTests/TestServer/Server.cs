@@ -19,41 +19,17 @@ namespace Nrk.HttpRequester.IntegrationTests.TestServer
 
             Delete["/"] = _ => "success";
 
-            Put["/headers"] = _ => 
-            {
-                var headers = Request.Headers.ToArray();
-                return Response.AsJson(headers);
-            };
+            Put["/headers"] = _ => Response.AsJson(Request.Headers.ToArray());
+            
+            Post["/headers"] = _ => Response.AsJson(Request.Headers.ToArray());
 
-            Post["/headers"] = _ =>
-            {
-                var headers = Request.Headers.ToArray();
-                return Response.AsJson(headers);
-            };
+            Delete["/headers"] = _ => Response.AsJson(Request.Headers.ToArray());
 
-            Delete["/headers"] = _ =>
-            {
-                var headers = Request.Headers.ToArray();
-                return Response.AsJson(headers);
-            };
+            Put["/content"] = _ => Request.Body.AsString();
 
-            Put["/content"] = _ =>
-            {
-                var body = Request.Body;
-                return body.AsString();
-            };
-
-            Post["/content"] = _ =>
-            {
-                var body = Request.Body;
-                return body.AsString();
-            };
-
-            Delete["/content"] = _ =>
-            {
-                var body = Request.Body;
-                return body.AsString();
-            };
+            Post["/content"] = _ => Request.Body.AsString();
+            
+            Delete["/content"] = _ => Request.Body.AsString();
 
             Get["/delay/{ms:int}"] = parameters =>
             {
