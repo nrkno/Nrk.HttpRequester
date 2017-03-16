@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Polly;
 
@@ -71,25 +72,41 @@ namespace Nrk.HttpRequester
             return requestPolicy.ExecuteAsync(() => PerformGetRequestAsync(urlWithParameters));
         }
 
+        public Task<HttpResponseMessage> PostDataAsync(string path, string authenticationScheme, string accessToken, StringContent content)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, path);
+            SetAuthenticationHeader(request, authenticationScheme, accessToken);
+            request.Content = content;
+            return _client.SendAsync(request);
+        }
+
+        public Task<HttpResponseMessage> PutDataAsync(string path, string authenticationScheme, string accessToken, StringContent content)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Put, path);
+            SetAuthenticationHeader(request, authenticationScheme, accessToken);
+            request.Content = content;
+            return _client.SendAsync(request);
+        }
+
+        public Task<HttpResponseMessage> DeleteAsync(string path, string authenticationScheme, string accessToken, StringContent content)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, path);
+            SetAuthenticationHeader(request, authenticationScheme, accessToken);
+            request.Content = content;
+            return _client.SendAsync(request);
+        }
+
         private Task<HttpResponseMessage> PerformGetRequestAsync(string path)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, path);
             return _client.SendAsync(request);
         }
 
-        public Task<HttpResponseMessage> PostDataAsync(string path, string userAccessToken, StringContent content)
+        private static void SetAuthenticationHeader(HttpRequestMessage request, string authenticationScheme, string accessToken)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(authenticationScheme) || string.IsNullOrEmpty(accessToken)) return;
+            request.Headers.Authorization = new AuthenticationHeaderValue(authenticationScheme, accessToken);
         }
 
-        public Task<HttpResponseMessage> PutDataAsync(string path, string userAccessToken, StringContent content)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<HttpResponseMessage> DeleteAsync(string path, string userAccessToken, StringContent content)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
