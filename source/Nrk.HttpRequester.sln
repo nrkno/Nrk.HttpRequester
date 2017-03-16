@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{879D3C33
 		..\build.fsx = ..\build.fsx
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nrk.HttpRequester.IntegrationTests", "Nrk.HttpRequester.IntegrationTests\Nrk.HttpRequester.IntegrationTests.csproj", "{6CB63FCF-96C2-45C5-B719-BB267341C0CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +30,10 @@ Global
 		{1AE95B3A-D396-40AD-BABE-E25352A0EAF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AE95B3A-D396-40AD-BABE-E25352A0EAF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AE95B3A-D396-40AD-BABE-E25352A0EAF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CB63FCF-96C2-45C5-B719-BB267341C0CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CB63FCF-96C2-45C5-B719-BB267341C0CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CB63FCF-96C2-45C5-B719-BB267341C0CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CB63FCF-96C2-45C5-B719-BB267341C0CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

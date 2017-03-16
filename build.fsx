@@ -7,11 +7,10 @@ open Fake.MSBuildHelper
 open Fake.Testing.XUnit2
 
 let buildDir = "./build/"
-let testDir = "./source/Nrk.HttpRequester.UnitTests"
+let testProjects = "./source/*Tests/*.csproj"
 let testOutputDir = "./tests/"
 let packageConfigs = !! "./source/**/packages.config"
-let projectReferences = !! "./source/**/*.csproj"
-                        -- "./source/Nrk.HttpRequester.UnitTests/*.csproj"
+let projectReferences = !! "./source/Nrk.HttpRequester/*.csproj"
 let projectName = "NRK.HttpRequester"
 let description = "Library for sending Http Requests, including a fluent interface for creating HttpClient instances"
 let version = environVarOrDefault "version" "0.0.0"
@@ -43,13 +42,13 @@ Target "Build" (fun _ ->
 )
 
 Target "BuildTests" (fun _ ->
-  !! (testDir + "/*.csproj")
+  !! testProjects
     |> MSBuildDebug testOutputDir "Build"
     |> Log "Building test project: "
 )
 
 Target "Test" (fun _ ->
-  !! (testOutputDir @@ "*UnitTests.dll")
+  !! (testOutputDir @@ "*Tests.dll")
   |> xUnit2 (fun p ->
                  { p with HtmlOutputPath = Some (testOutputDir @@ "xunit.html") })
 )
