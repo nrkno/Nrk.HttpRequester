@@ -65,21 +65,21 @@ namespace Nrk.HttpRequester.IntegrationTests
         }
 
         [Fact]
-        public async Task PutDataAsync_ShouldGetResponseFromServer()
+        public async Task PutAsync_ShouldGetResponseFromServer()
         {
             // Arrange
             var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
             var webRequester = new WebRequester(httpClient);
 
             // Act
-            var response = await webRequester.PutDataAsync("", "", "", new StringContent("test"));
+            var response = await webRequester.PutAsync("", "", "", new StringContent("test"));
 
             // Assert
             response.IsSuccessStatusCode.ShouldBeTrue();
         }
 
         [Fact]
-        public async Task PutDataAsync_ShouldSetAuthorizationHeader()
+        public async Task PutAsync_ShouldSetAuthorizationHeader()
         {
             // Arrange
             var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
@@ -89,7 +89,7 @@ namespace Nrk.HttpRequester.IntegrationTests
             const string authorizationScheme = "bearer";
             const string accessToken = "accessToken";
             // Act
-            var response = await webRequester.PutDataAsync("/headers", authorizationScheme, accessToken, content);
+            var response = await webRequester.PutAsync("/headers", authorizationScheme, accessToken, content);
 
             // Assert
             response.RequestMessage.Headers.Authorization.Scheme.ShouldBe(authorizationScheme);
@@ -97,7 +97,7 @@ namespace Nrk.HttpRequester.IntegrationTests
         }
 
         [Fact]
-        public async Task PutDataAsync_ShouldSetContent()
+        public async Task PutAsync_ShouldSetContent()
         {
             // Arrange
             var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
@@ -105,7 +105,104 @@ namespace Nrk.HttpRequester.IntegrationTests
 
             const string exampleContent = "Sample content";
             // Act
-            var response = await webRequester.PutDataAsync("/content", "", "", new StringContent(exampleContent));
+            var response = await webRequester.PutAsync("/content", "", "", new StringContent(exampleContent));
+
+            // Assert
+            var actualContent = await response.Content.ReadAsStringAsync();
+            actualContent.ShouldBe(exampleContent);
+        }
+
+        [Fact]
+        public async Task PostAsync_ShouldGetResponseFromServer()
+        {
+            // Arrange
+            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
+            var webRequester = new WebRequester(httpClient);
+
+            // Act
+            var response = await webRequester.PostAsync("", "", "", new StringContent("test"));
+
+            // Assert
+            response.IsSuccessStatusCode.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task PostAsync_ShouldSetAuthorizationHeader()
+        {
+            // Arrange
+            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
+            var webRequester = new WebRequester(httpClient);
+
+            var content = new StringContent("");
+            const string authorizationScheme = "bearer";
+            const string accessToken = "accessToken";
+            // Act
+            var response = await webRequester.PostAsync("/headers", authorizationScheme, accessToken, content);
+
+            // Assert
+            response.RequestMessage.Headers.Authorization.Scheme.ShouldBe(authorizationScheme);
+            response.RequestMessage.Headers.Authorization.Parameter.ShouldBe(accessToken);
+        }
+
+        [Fact]
+        public async Task PostAsync_ShouldSetContent()
+        {
+            // Arrange
+            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
+            var webRequester = new WebRequester(httpClient);
+
+            const string exampleContent = "Sample content";
+            // Act
+            var response = await webRequester.PostAsync("/content", "", "", new StringContent(exampleContent));
+
+            // Assert
+            var actualContent = await response.Content.ReadAsStringAsync();
+            actualContent.ShouldBe(exampleContent);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_ShouldGetResponseFromServer()
+        {
+            // Arrange
+            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
+            var webRequester = new WebRequester(httpClient);
+
+            // Act
+            var response = await webRequester.DeleteAsync("", "", "", new StringContent("test"));
+
+            // Assert
+            response.IsSuccessStatusCode.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task DeleteAsync_ShouldSetAuthorizationHeader()
+        {
+            // Arrange
+            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
+            var webRequester = new WebRequester(httpClient);
+
+            var content = new StringContent("");
+            const string authorizationScheme = "bearer";
+            const string accessToken = "accessToken";
+
+            // Act
+            var response = await webRequester.DeleteAsync("/headers", authorizationScheme, accessToken, content);
+
+            // Assert
+            response.RequestMessage.Headers.Authorization.Scheme.ShouldBe(authorizationScheme);
+            response.RequestMessage.Headers.Authorization.Parameter.ShouldBe(accessToken);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_ShouldSetContent()
+        {
+            // Arrange
+            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
+            var webRequester = new WebRequester(httpClient);
+
+            const string exampleContent = "Sample content";
+            // Act
+            var response = await webRequester.DeleteAsync("/content", "", "", new StringContent(exampleContent));
 
             // Assert
             var actualContent = await response.Content.ReadAsStringAsync();

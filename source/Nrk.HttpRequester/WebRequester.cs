@@ -72,7 +72,7 @@ namespace Nrk.HttpRequester
             return requestPolicy.ExecuteAsync(() => PerformGetRequestAsync(urlWithParameters));
         }
 
-        public Task<HttpResponseMessage> PostDataAsync(string path, string authenticationScheme, string accessToken, StringContent content)
+        public Task<HttpResponseMessage> PostAsync(string path, string authenticationScheme, string accessToken, StringContent content)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, path);
             SetAuthenticationHeader(request, authenticationScheme, accessToken);
@@ -80,7 +80,7 @@ namespace Nrk.HttpRequester
             return _client.SendAsync(request);
         }
 
-        public Task<HttpResponseMessage> PutDataAsync(string path, string authenticationScheme, string accessToken, StringContent content)
+        public Task<HttpResponseMessage> PutAsync(string path, string authenticationScheme, string accessToken, StringContent content)
         {
             var request = new HttpRequestMessage(HttpMethod.Put, path);
             SetAuthenticationHeader(request, authenticationScheme, accessToken);

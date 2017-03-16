@@ -15,13 +15,41 @@ namespace Nrk.HttpRequester.IntegrationTests.TestServer
 
             Put["/"] = _ => "success";
 
+            Post["/"] = _ => "success";
+
+            Delete["/"] = _ => "success";
+
             Put["/headers"] = _ => 
             {
                 var headers = Request.Headers.ToArray();
                 return Response.AsJson(headers);
             };
 
+            Post["/headers"] = _ =>
+            {
+                var headers = Request.Headers.ToArray();
+                return Response.AsJson(headers);
+            };
+
+            Delete["/headers"] = _ =>
+            {
+                var headers = Request.Headers.ToArray();
+                return Response.AsJson(headers);
+            };
+
             Put["/content"] = _ =>
+            {
+                var body = Request.Body;
+                return body.AsString();
+            };
+
+            Post["/content"] = _ =>
+            {
+                var body = Request.Body;
+                return body.AsString();
+            };
+
+            Delete["/content"] = _ =>
             {
                 var body = Request.Body;
                 return body.AsString();
