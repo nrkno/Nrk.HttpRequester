@@ -82,8 +82,7 @@ namespace Nrk.HttpRequester.IntegrationTests
         public async Task PutAsync_ShouldSetAuthorizationHeader()
         {
             // Arrange
-            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
-            var webRequester = new WebRequester(httpClient);
+            var webRequester = SetupWebRequester();
 
             var content = new StringContent("");
             const string authorizationScheme = "bearer";
@@ -92,16 +91,14 @@ namespace Nrk.HttpRequester.IntegrationTests
             var response = await webRequester.PutAsync("/headers", content, authorizationScheme, accessToken);
 
             // Assert
-            response.RequestMessage.Headers.Authorization.Scheme.ShouldBe(authorizationScheme);
-            response.RequestMessage.Headers.Authorization.Parameter.ShouldBe(accessToken);
+            VerifyAuthorizationHeader(response, authorizationScheme, accessToken);
         }
 
         [Fact]
         public async Task PutAsync_ShouldSetContent()
         {
             // Arrange
-            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
-            var webRequester = new WebRequester(httpClient);
+            var webRequester = SetupWebRequester();
 
             const string exampleContent = "Sample content";
             // Act
@@ -116,8 +113,7 @@ namespace Nrk.HttpRequester.IntegrationTests
         public async Task PostAsync_ShouldGetResponseFromServer()
         {
             // Arrange
-            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
-            var webRequester = new WebRequester(httpClient);
+            var webRequester = SetupWebRequester();
 
             // Act
             var response = await webRequester.PostAsync("", new StringContent("test"), "", "");
@@ -130,8 +126,7 @@ namespace Nrk.HttpRequester.IntegrationTests
         public async Task PostAsync_ShouldSetAuthorizationHeader()
         {
             // Arrange
-            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
-            var webRequester = new WebRequester(httpClient);
+            var webRequester = SetupWebRequester();
 
             var content = new StringContent("");
             const string authorizationScheme = "bearer";
@@ -140,16 +135,14 @@ namespace Nrk.HttpRequester.IntegrationTests
             var response = await webRequester.PostAsync("/headers", content, authorizationScheme, accessToken);
 
             // Assert
-            response.RequestMessage.Headers.Authorization.Scheme.ShouldBe(authorizationScheme);
-            response.RequestMessage.Headers.Authorization.Parameter.ShouldBe(accessToken);
+            VerifyAuthorizationHeader(response, authorizationScheme, accessToken);
         }
 
         [Fact]
         public async Task PostAsync_ShouldSetContent()
         {
             // Arrange
-            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
-            var webRequester = new WebRequester(httpClient);
+            var webRequester = SetupWebRequester();
 
             const string exampleContent = "Sample content";
             // Act
@@ -164,8 +157,7 @@ namespace Nrk.HttpRequester.IntegrationTests
         public async Task DeleteAsync_ShouldGetResponseFromServer()
         {
             // Arrange
-            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
-            var webRequester = new WebRequester(httpClient);
+            var webRequester = SetupWebRequester();
 
             // Act
             var response = await webRequester.DeleteAsync("", new StringContent("test"), "", "");
@@ -178,8 +170,7 @@ namespace Nrk.HttpRequester.IntegrationTests
         public async Task DeleteAsync_ShouldSetAuthorizationHeader()
         {
             // Arrange
-            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
-            var webRequester = new WebRequester(httpClient);
+            var webRequester = SetupWebRequester();
 
             var content = new StringContent("");
             const string authorizationScheme = "bearer";
@@ -189,16 +180,14 @@ namespace Nrk.HttpRequester.IntegrationTests
             var response = await webRequester.DeleteAsync("/headers", content, authorizationScheme, accessToken);
 
             // Assert
-            response.RequestMessage.Headers.Authorization.Scheme.ShouldBe(authorizationScheme);
-            response.RequestMessage.Headers.Authorization.Parameter.ShouldBe(accessToken);
+            VerifyAuthorizationHeader(response, authorizationScheme, accessToken);
         }
 
         [Fact]
         public async Task DeleteAsync_ShouldSetContent()
         {
             // Arrange
-            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
-            var webRequester = new WebRequester(httpClient);
+            var webRequester = SetupWebRequester();
 
             const string exampleContent = "Sample content";
             // Act
@@ -207,6 +196,18 @@ namespace Nrk.HttpRequester.IntegrationTests
             // Assert
             var actualContent = await response.Content.ReadAsStringAsync();
             actualContent.ShouldBe(exampleContent);
+        }
+
+        private static void VerifyAuthorizationHeader(HttpResponseMessage response, string authorizationScheme, string accessToken)
+        {
+            response.RequestMessage.Headers.Authorization.Scheme.ShouldBe(authorizationScheme);
+            response.RequestMessage.Headers.Authorization.Parameter.ShouldBe(accessToken);
+        }
+
+        private static IWebRequester SetupWebRequester()
+        {
+            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
+            return new WebRequester(httpClient);
         }
 
         public void Dispose()

@@ -13,5 +13,6 @@ namespace Nrk.HttpRequester
         Task<HttpResponseMessage> PostAsync(string path, StringContent content, string authenticationScheme, string accessToken);
         Task<HttpResponseMessage> PutAsync(string path, StringContent content, string authenticationScheme, string accessToken);
         Task<HttpResponseMessage> DeleteAsync(string path, StringContent content, string authenticationScheme, string accessToken);
+        Task<HttpResponseMessage> DeleteAsync(string path, string authenticationScheme, string accessToken);
     }
 }
