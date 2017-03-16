@@ -76,5 +76,20 @@ namespace Nrk.HttpRequester
             var request = new HttpRequestMessage(HttpMethod.Get, path);
             return _client.SendAsync(request);
         }
+
+        public Task<HttpResponseMessage> PostDataAsync(string path, string userAccessToken, StringContent content)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<HttpResponseMessage> PutDataAsync(string path, string userAccessToken, StringContent content)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<HttpResponseMessage> DeleteAsync(string path, string userAccessToken, StringContent content)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
