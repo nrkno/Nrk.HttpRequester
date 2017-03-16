@@ -72,7 +72,7 @@ namespace Nrk.HttpRequester
             return requestPolicy.ExecuteAsync(() => PerformGetRequestAsync(urlWithParameters));
         }
 
-        public Task<HttpResponseMessage> PostAsync(string path, string authenticationScheme, string accessToken, StringContent content)
+        public Task<HttpResponseMessage> PostAsync(string path, StringContent content, string authenticationScheme, string accessToken)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, path);
             SetAuthenticationHeader(request, authenticationScheme, accessToken);
@@ -80,7 +80,7 @@ namespace Nrk.HttpRequester
             return _client.SendAsync(request);
         }
 
-        public Task<HttpResponseMessage> PutAsync(string path, string authenticationScheme, string accessToken, StringContent content)
+        public Task<HttpResponseMessage> PutAsync(string path, StringContent content, string authenticationScheme, string accessToken)
         {
             var request = new HttpRequestMessage(HttpMethod.Put, path);
             SetAuthenticationHeader(request, authenticationScheme, accessToken);
@@ -88,11 +88,18 @@ namespace Nrk.HttpRequester
             return _client.SendAsync(request);
         }
 
-        public Task<HttpResponseMessage> DeleteAsync(string path, string authenticationScheme, string accessToken, StringContent content)
+        public Task<HttpResponseMessage> DeleteAsync(string path, StringContent content, string authenticationScheme, string accessToken)
         {
             var request = new HttpRequestMessage(HttpMethod.Delete, path);
             SetAuthenticationHeader(request, authenticationScheme, accessToken);
             request.Content = content;
+            return _client.SendAsync(request);
+        }
+
+        public Task<HttpResponseMessage> DeleteAsync(string path, string authenticationScheme, string accessToken)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, path);
+            SetAuthenticationHeader(request, authenticationScheme, accessToken);
             return _client.SendAsync(request);
         }
 

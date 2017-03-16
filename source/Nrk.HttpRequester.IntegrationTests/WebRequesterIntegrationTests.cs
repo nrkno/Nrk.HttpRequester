@@ -72,7 +72,7 @@ namespace Nrk.HttpRequester.IntegrationTests
             var webRequester = new WebRequester(httpClient);
 
             // Act
-            var response = await webRequester.PutAsync("", "", "", new StringContent("test"));
+            var response = await webRequester.PutAsync("", new StringContent("test"), "", "");
 
             // Assert
             response.IsSuccessStatusCode.ShouldBeTrue();
@@ -89,7 +89,7 @@ namespace Nrk.HttpRequester.IntegrationTests
             const string authorizationScheme = "bearer";
             const string accessToken = "accessToken";
             // Act
-            var response = await webRequester.PutAsync("/headers", authorizationScheme, accessToken, content);
+            var response = await webRequester.PutAsync("/headers", content, authorizationScheme, accessToken);
 
             // Assert
             response.RequestMessage.Headers.Authorization.Scheme.ShouldBe(authorizationScheme);
@@ -105,7 +105,7 @@ namespace Nrk.HttpRequester.IntegrationTests
 
             const string exampleContent = "Sample content";
             // Act
-            var response = await webRequester.PutAsync("/content", "", "", new StringContent(exampleContent));
+            var response = await webRequester.PutAsync("/content", new StringContent(exampleContent), "", "");
 
             // Assert
             var actualContent = await response.Content.ReadAsStringAsync();
@@ -120,7 +120,7 @@ namespace Nrk.HttpRequester.IntegrationTests
             var webRequester = new WebRequester(httpClient);
 
             // Act
-            var response = await webRequester.PostAsync("", "", "", new StringContent("test"));
+            var response = await webRequester.PostAsync("", new StringContent("test"), "", "");
 
             // Assert
             response.IsSuccessStatusCode.ShouldBeTrue();
@@ -137,7 +137,7 @@ namespace Nrk.HttpRequester.IntegrationTests
             const string authorizationScheme = "bearer";
             const string accessToken = "accessToken";
             // Act
-            var response = await webRequester.PostAsync("/headers", authorizationScheme, accessToken, content);
+            var response = await webRequester.PostAsync("/headers", content, authorizationScheme, accessToken);
 
             // Assert
             response.RequestMessage.Headers.Authorization.Scheme.ShouldBe(authorizationScheme);
@@ -153,7 +153,7 @@ namespace Nrk.HttpRequester.IntegrationTests
 
             const string exampleContent = "Sample content";
             // Act
-            var response = await webRequester.PostAsync("/content", "", "", new StringContent(exampleContent));
+            var response = await webRequester.PostAsync("/content", new StringContent(exampleContent), "", "");
 
             // Assert
             var actualContent = await response.Content.ReadAsStringAsync();
@@ -168,7 +168,7 @@ namespace Nrk.HttpRequester.IntegrationTests
             var webRequester = new WebRequester(httpClient);
 
             // Act
-            var response = await webRequester.DeleteAsync("", "", "", new StringContent("test"));
+            var response = await webRequester.DeleteAsync("", new StringContent("test"), "", "");
 
             // Assert
             response.IsSuccessStatusCode.ShouldBeTrue();
@@ -186,7 +186,7 @@ namespace Nrk.HttpRequester.IntegrationTests
             const string accessToken = "accessToken";
 
             // Act
-            var response = await webRequester.DeleteAsync("/headers", authorizationScheme, accessToken, content);
+            var response = await webRequester.DeleteAsync("/headers", content, authorizationScheme, accessToken);
 
             // Assert
             response.RequestMessage.Headers.Authorization.Scheme.ShouldBe(authorizationScheme);
@@ -202,7 +202,7 @@ namespace Nrk.HttpRequester.IntegrationTests
 
             const string exampleContent = "Sample content";
             // Act
-            var response = await webRequester.DeleteAsync("/content", "", "", new StringContent(exampleContent));
+            var response = await webRequester.DeleteAsync("/content", new StringContent(exampleContent), "", "");
 
             // Assert
             var actualContent = await response.Content.ReadAsStringAsync();
