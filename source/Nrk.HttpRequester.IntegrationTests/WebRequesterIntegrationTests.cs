@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Owin.Hosting;
 using Nrk.HttpRequester.IntegrationTests.TestServer;
@@ -66,7 +67,7 @@ namespace Nrk.HttpRequester.IntegrationTests
         public async Task PutAsync_ShouldGetResponseFromServer()
         {
             // Act
-            var response = await _webRequester.PutAsync("", new StringContent("test"), "", "");
+            var response = await _webRequester.PutAsync("", new StringContent("test"));
 
             // Assert
             response.IsSuccessStatusCode.ShouldBeTrue();
@@ -80,7 +81,7 @@ namespace Nrk.HttpRequester.IntegrationTests
             const string authorizationScheme = "bearer";
             const string accessToken = "accessToken";
             // Act
-            var response = await _webRequester.PutAsync("/headers", content, authorizationScheme, accessToken);
+            var response = await _webRequester.PutAsync("/headers", content, new AuthenticationHeaderValue(authorizationScheme, accessToken));
 
             // Assert
             VerifyAuthorizationHeader(response, authorizationScheme, accessToken);
@@ -92,7 +93,7 @@ namespace Nrk.HttpRequester.IntegrationTests
             // Arrange
             const string exampleContent = "Sample content";
             // Act
-            var response = await _webRequester.PutAsync("/content", new StringContent(exampleContent), "", "");
+            var response = await _webRequester.PutAsync("/content", new StringContent(exampleContent));
 
             // Assert
             var actualContent = await response.Content.ReadAsStringAsync();
@@ -103,7 +104,7 @@ namespace Nrk.HttpRequester.IntegrationTests
         public async Task PostAsync_ShouldGetResponseFromServer()
         {
             // Act
-            var response = await _webRequester.PostAsync("", new StringContent("test"), "", "");
+            var response = await _webRequester.PostAsync("", new StringContent("test"));
 
             // Assert
             response.IsSuccessStatusCode.ShouldBeTrue();
@@ -117,7 +118,7 @@ namespace Nrk.HttpRequester.IntegrationTests
             const string authorizationScheme = "bearer";
             const string accessToken = "accessToken";
             // Act
-            var response = await _webRequester.PostAsync("/headers", content, authorizationScheme, accessToken);
+            var response = await _webRequester.PostAsync("/headers", content, new AuthenticationHeaderValue(authorizationScheme, accessToken));
 
             // Assert
             VerifyAuthorizationHeader(response, authorizationScheme, accessToken);
@@ -129,7 +130,7 @@ namespace Nrk.HttpRequester.IntegrationTests
             // Arrange
             const string exampleContent = "Sample content";
             // Act
-            var response = await _webRequester.PostAsync("/content", new StringContent(exampleContent), "", "");
+            var response = await _webRequester.PostAsync("/content", new StringContent(exampleContent));
 
             // Assert
             var actualContent = await response.Content.ReadAsStringAsync();
@@ -140,7 +141,7 @@ namespace Nrk.HttpRequester.IntegrationTests
         public async Task DeleteAsync_ShouldGetResponseFromServer()
         {
             // Act
-            var response = await _webRequester.DeleteAsync("", new StringContent("test"), "", "");
+            var response = await _webRequester.DeleteAsync("", new StringContent("test"));
 
             // Assert
             response.IsSuccessStatusCode.ShouldBeTrue();
@@ -155,7 +156,7 @@ namespace Nrk.HttpRequester.IntegrationTests
             const string accessToken = "accessToken";
 
             // Act
-            var response = await _webRequester.DeleteAsync("/headers", content, authorizationScheme, accessToken);
+            var response = await _webRequester.DeleteAsync("/headers", content, new AuthenticationHeaderValue(authorizationScheme, accessToken));
 
             // Assert
             VerifyAuthorizationHeader(response, authorizationScheme, accessToken);
@@ -168,7 +169,7 @@ namespace Nrk.HttpRequester.IntegrationTests
             const string exampleContent = "Sample content";
 
             // Act
-            var response = await _webRequester.DeleteAsync("/content", new StringContent(exampleContent), "", "");
+            var response = await _webRequester.DeleteAsync("/content", new StringContent(exampleContent));
 
             // Assert
             var actualContent = await response.Content.ReadAsStringAsync();
