@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Polly;
 
@@ -69,6 +70,87 @@ namespace Nrk.HttpRequester
                 .WaitAndRetryAsync(retries, retryAttempt => _retryTimeout);
 
             return requestPolicy.ExecuteAsync(() => PerformGetRequestAsync(urlWithParameters));
+        }
+
+        public Task<HttpResponseMessage> PostAsync(string path, StringContent content, AuthenticationHeaderValue authenticationHeader)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, path);
+            request.Headers.Authorization = authenticationHeader;
+            request.Content = content;
+            return _client.SendAsync(request);
+        }
+
+        public Task<HttpResponseMessage> PostAsync(string path, StringContent content)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, path)
+            {
+                Content = content
+            };
+
+            return _client.SendAsync(request);
+        }
+
+        public Task<HttpResponseMessage> PutAsync(string path, StringContent content, AuthenticationHeaderValue authenticationHeader)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Put, path);
+            request.Headers.Authorization = authenticationHeader;
+            request.Content = content;
+            return _client.SendAsync(request);
+        }
+
+        public Task<HttpResponseMessage> PutAsync(string path, StringContent content)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Put, path)
+            {
+                Content = content
+            };
+
+            return _client.SendAsync(request);
+        }
+
+        public Task<HttpResponseMessage> DeleteAsync(string path, StringContent content, AuthenticationHeaderValue authenticationHeader)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, path);
+            request.Headers.Authorization = authenticationHeader;
+            request.Content = content;
+            return _client.SendAsync(request);
+        }
+
+        public Task<HttpResponseMessage> DeleteAsync(string path, AuthenticationHeaderValue authenticationHeader)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, path);
+            request.Headers.Authorization = authenticationHeader;
+            return _client.SendAsync(request);
+        }
+
+        public Task<HttpResponseMessage> DeleteAsync(string path, StringContent content)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, path)
+            {
+                Content = content
+            };
+
+            return _client.SendAsync(request);
+        }
+
+        public Task<HttpResponseMessage> DeleteAsync(string path)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Put, path);
+            return _client.SendAsync(request);
+        }
+      
+        public Task<HttpResponseMessage> SendMessageAsync(HttpRequestMessage request)
+        {
+            return _client.SendAsync(request);
+        }
+
+        public Task<HttpResponseMessage> SendMessageAsyncWithRetries(HttpRequestMessage request, int retries)
+        {
+            var requestPolicy = Policy
+                .Handle<TaskCanceledException>()
+                .WaitAndRetryAsync(retries, retryAttempt => _retryTimeout);
+
+            return requestPolicy.ExecuteAsync(() => _client.SendAsync(request));
         }
 
         private Task<HttpResponseMessage> PerformGetRequestAsync(string path)

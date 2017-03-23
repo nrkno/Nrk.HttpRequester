@@ -13,7 +13,6 @@ namespace Nrk.HttpRequester.UnitTests
         {
             // Act
             var ex = Record.Exception(() => WebRequestHttpClientFactory.Configure(null).Create());
-
             // Assert
             ex.ShouldBeOfType<ArgumentNullException>();
         }
@@ -50,7 +49,7 @@ namespace Nrk.HttpRequester.UnitTests
 
             // Act
             var httpClient = WebRequestHttpClientFactory.Configure(baseUri).WithDefaultRequestHeaders(requestHeaders).Create();
-
+            
             // Assert
             httpClient.Client.DefaultRequestHeaders.Contains("headerKey").ShouldBeTrue();
         }
