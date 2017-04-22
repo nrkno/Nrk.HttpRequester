@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Nrk.HttpRequester
@@ -58,7 +59,7 @@ namespace Nrk.HttpRequester
 
                 _baseUrl = baseUrl;
             }
-
+            
             public IHttpClientBuilder WithTimeout(TimeSpan timeout)
             {
                 _timeout = timeout;
@@ -148,6 +149,12 @@ namespace Nrk.HttpRequester
             public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
             {
                 return Client.SendAsync(request);
+            }
+
+            public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationToken cancellationToken)
+            {
+
+                return Client.SendAsync(request, completionOption, cancellationToken);
             }
         }
     }

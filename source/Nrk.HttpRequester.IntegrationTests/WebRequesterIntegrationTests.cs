@@ -23,6 +23,45 @@ namespace Nrk.HttpRequester.IntegrationTests
         }
 
         [Fact]
+        public async Task GetResponseAsyncWithListOfTimeouts_ShouldTimeoutOnSlowResponse()
+        {
+            // Arrange
+            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
+            var webRequester = new WebRequester(httpClient);
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () => await webRequester.GetResponseAsync("/delay/250", new TimeSpan[]
+            {
+                TimeSpan.FromMilliseconds(100),
+                TimeSpan.FromMilliseconds(100) 
+            }));
+
+            // Assert
+            exception.ShouldBeOfType(typeof(TaskCanceledException));
+        }
+
+        [Fact]
+        public async Task GetResponseAsyncWithListOfTimeouts_ShouldRetryAndSucceedOnSlowResponse()
+        {
+            // Arrange
+            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).Create();
+
+            var webRequester = new WebRequester(httpClient);
+
+            // Act
+            var response = await webRequester.GetResponseAsync("/delay/150", new List<TimeSpan>
+            {
+                TimeSpan.FromMilliseconds(101),
+                TimeSpan.FromMilliseconds(201),
+                TimeSpan.FromMilliseconds(1550)
+            });
+
+            // Assert
+            (await response.Content.ReadAsStringAsync()).Contains("wait").ShouldBeTrue();
+        }
+
+
+        [Fact]
         public async Task GetResponseAsync_ShouldTimeoutOnSlowResponse()
         {
             // Arrange

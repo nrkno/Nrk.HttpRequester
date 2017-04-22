@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 using Polly;
 
@@ -60,6 +62,20 @@ namespace Nrk.HttpRequester
             var url = UriBuilder.Build(pathTemplate, parameters);
 
             return GetResponseAsync(url, retries);
+        }
+        public Task<HttpResponseMessage> GetResponseAsync(string path, IList<TimeSpan> retries)
+        {
+            var urlWithParameters = UriBuilder.Build(path, _defaultQueryParameters);
+            var retryQueue = new Queue<TimeSpan>(retries);
+            var delay = retryQueue.Dequeue();
+            var requestPolicy = Policy
+                .Handle<TaskCanceledException>()
+                .RetryAsync(retries.Count -1, (ex, ct) =>
+                {
+                    if (retryQueue.Count > 0) delay = retryQueue.Dequeue();
+                }); 
+
+            return requestPolicy.ExecuteAsync(() => PerformGetRequestAsyncWithTimeout(urlWithParameters, delay));
         }
 
         public Task<HttpResponseMessage> GetResponseAsync(string path, int retries = 0)
@@ -153,7 +169,16 @@ namespace Nrk.HttpRequester
             return requestPolicy.ExecuteAsync(() => _client.SendAsync(request));
         }
 
-        private Task<HttpResponseMessage> PerformGetRequestAsync(string path)
+        private Task<HttpResponseMessage> PerformGetRequestAsyncWithTimeout(string path, TimeSpan timeout)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, path);
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(timeout);
+            var tsk = _client.SendAsync(request, new HttpCompletionOption(), cts.Token);
+            return tsk;
+        }
+
+         private Task<HttpResponseMessage> PerformGetRequestAsync(string path)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, path);
             return _client.SendAsync(request);
