@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Nrk.HttpRequester
@@ -7,5 +8,6 @@ namespace Nrk.HttpRequester
     {
         HttpClient Client { get; }
         Task<HttpResponseMessage> SendAsync(HttpRequestMessage request);
+        Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationToken cancellationToken);
     }
 }

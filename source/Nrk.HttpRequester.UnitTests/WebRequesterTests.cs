@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using FakeItEasy;
 using Shouldly;
@@ -25,6 +27,23 @@ namespace Nrk.HttpRequester.UnitTests
             {
                 Content = new StringContent("All good")
             };
+        }
+
+        [Fact]
+        public async Task GetResponseAsync_WithRetrieList_ShouldRetrySendAsync()
+        {
+            // Arrange
+            var httpClient = A.Fake<IHttpClient>();
+            A.CallTo(() => httpClient.SendAsync(A<HttpRequestMessage>.Ignored,
+                A<HttpCompletionOption>.Ignored, A<CancellationToken>.Ignored)).Throws<TaskCanceledException>().NumberOfTimes(1);
+            var requester = new WebRequester(httpClient, TimeSpan.FromMilliseconds(1));
+
+            // Act
+            await requester.GetResponseAsync("/test", new List<TimeSpan> {TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(100)});
+
+            // Assert
+            A.CallTo(() => httpClient.SendAsync(A<HttpRequestMessage>.Ignored, A<HttpCompletionOption>.Ignored,
+                A<CancellationToken>.Ignored)).MustHaveHappened(Repeated.Exactly.Times(2));
         }
 
         [Fact]

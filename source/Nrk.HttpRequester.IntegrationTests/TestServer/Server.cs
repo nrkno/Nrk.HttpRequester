@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using Nancy;
 using Nancy.Extensions;
 using Owin;
@@ -31,10 +33,10 @@ namespace Nrk.HttpRequester.IntegrationTests.TestServer
             
             Delete["/content"] = _ => Request.Body.AsString();
 
-            Get["/delay/{ms:int}"] = parameters =>
+            Get["/delay/{ms:int}", true] = async (parameters, ct) =>
             {
-                Thread.Sleep(parameters.ms);
-                return $"Finished sleeping for {parameters.ms}ms";
+                await Task.Delay(TimeSpan.FromMilliseconds(parameters.ms));
+                return (Response)$"Finished waiting for {parameters.ms}ms";
             };
 
             Get["/headers"] = _ =>
