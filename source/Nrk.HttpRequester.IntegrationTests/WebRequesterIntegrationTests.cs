@@ -52,8 +52,8 @@ namespace Nrk.HttpRequester.IntegrationTests
             var response = await webRequester.GetResponseAsync("/delay/150", new List<TimeSpan>
             {
                 TimeSpan.FromMilliseconds(101),
-                TimeSpan.FromMilliseconds(201),
-                TimeSpan.FromMilliseconds(1550)
+                TimeSpan.FromMilliseconds(140),
+                TimeSpan.FromMilliseconds(350)
             });
 
             // Assert

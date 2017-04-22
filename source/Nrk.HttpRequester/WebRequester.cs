@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -65,6 +67,7 @@ namespace Nrk.HttpRequester
         }
         public Task<HttpResponseMessage> GetResponseAsync(string path, IList<TimeSpan> retries)
         {
+            Debug.Assert(retries.All(r => r < _client.Client.Timeout), "Does not make sense with longer timeouts");
             var urlWithParameters = UriBuilder.Build(path, _defaultQueryParameters);
             var retryQueue = new Queue<TimeSpan>(retries);
             var delay = retryQueue.Dequeue();
