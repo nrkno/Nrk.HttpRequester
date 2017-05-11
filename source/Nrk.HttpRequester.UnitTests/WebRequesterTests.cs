@@ -12,7 +12,6 @@ namespace Nrk.HttpRequester.UnitTests
     {
         private readonly HttpResponseMessage _basicResponse;
         private readonly HttpClient _basicClient;
-        private Uri _baseAdress;
 
         public WebRequesterTests()
         {
@@ -20,7 +19,6 @@ namespace Nrk.HttpRequester.UnitTests
             var client = new HttpClient { BaseAddress = baseAdress };
 
             _basicClient = client;
-            _baseAdress = baseAdress;
             _basicResponse = new HttpResponseMessage
             {
                 Content = new StringContent("All good")
@@ -107,7 +105,7 @@ namespace Nrk.HttpRequester.UnitTests
             var requester = new WebRequester(httpClient);
 
             // Act
-            var ex = await Record.ExceptionAsync(async () => { await requester.GetResponseAsync("/test", null, 0); });
+            var ex = await Record.ExceptionAsync(async () => { await requester.GetResponseAsync("/test", null, null, 0); });
 
             // Assert
             ex.ShouldBeOfType<ArgumentNullException>();
@@ -121,7 +119,7 @@ namespace Nrk.HttpRequester.UnitTests
             var requester = new WebRequester(httpClient);
 
             // Act
-            var ex = await Record.ExceptionAsync(async () => { await requester.GetResponseAsStringAsync("/test", null, 0); });
+            var ex = await Record.ExceptionAsync(async () => { await requester.GetResponseAsStringAsync("/test", null, null, 0); });
 
             // Assert
             ex.ShouldBeOfType<ArgumentNullException>();

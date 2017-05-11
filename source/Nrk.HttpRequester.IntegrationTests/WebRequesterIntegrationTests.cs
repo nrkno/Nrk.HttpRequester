@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Owin.Hosting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Nrk.HttpRequester.IntegrationTests.TestServer;
 using Shouldly;
 using Xunit;
@@ -61,6 +62,33 @@ namespace Nrk.HttpRequester.IntegrationTests
 
             // Assert
             response.IsSuccessStatusCode.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task GetResponseAsync_ShouldSetAuthorizationHeader()
+        {
+            // Arrange
+            const string authorizationScheme = "bearer";
+            const string accessToken = "accessToken";
+            // Act
+            var response = await _webRequester.GetResponseAsync("/headers", new AuthenticationHeaderValue(authorizationScheme, accessToken));
+
+            // Assert
+            VerifyAuthorizationHeader(response, authorizationScheme, accessToken);
+        }
+
+        [Fact]
+        public async Task GetResponseAsStringAsync_ShouldSetAuthorizationHeader()
+        {
+            // Arrange
+            const string authorizationScheme = "bearer";
+            const string accessToken = "accessToken";
+            // Act
+            var response = await _webRequester.GetResponseAsStringAsync("/headers", new AuthenticationHeaderValue(authorizationScheme, accessToken));
+
+            // Assert
+            response.ShouldContain("Authorization");
+            response.ShouldContain("bearer accessToken");
         }
 
         [Fact]

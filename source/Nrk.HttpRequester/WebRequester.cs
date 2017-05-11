@@ -27,6 +27,22 @@ namespace Nrk.HttpRequester
             _defaultQueryParameters = new NameValueCollection();
         }
 
+        public Task<string> GetResponseAsStringAsync(
+            string pathTemplate,
+            NameValueCollection parameters,
+            AuthenticationHeaderValue authenticationHeader,
+            int retries = 0)
+        {
+	        if (parameters == null)
+	        {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
+            var uri = UriBuilder.Build(pathTemplate, parameters);
+
+            return GetResponseAsStringAsync(uri, retries);
+        }
+
         public Task<string> GetResponseAsStringAsync(string pathTemplate, NameValueCollection parameters, int retries = 0)
         {
             if (parameters == null)
@@ -39,6 +55,19 @@ namespace Nrk.HttpRequester
             return GetResponseAsStringAsync(uri, retries);
         }
 
+
+        public async Task<string> GetResponseAsStringAsync(
+            string path,
+            AuthenticationHeaderValue authenticationHeader,
+            int retries = 0)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, path);
+	        request.Headers.Authorization = authenticationHeader;
+
+	        var response = await _client.SendAsync(request).ConfigureAwait(false);
+	        return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        }
+
         public async Task<string> GetResponseAsStringAsync(string path, int retries = 0)
         {
             var response = await GetResponseAsync(path, retries).ConfigureAwait(false);
@@ -48,6 +77,26 @@ namespace Nrk.HttpRequester
             }
 
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        }
+
+
+        public Task<HttpResponseMessage> GetResponseAsync(
+            string pathTemplate,
+            NameValueCollection parameters,
+            AuthenticationHeaderValue authenticationHeader,
+            int retries = 0)
+        {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
+            var uri = UriBuilder.Build(pathTemplate, parameters);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, uri);
+	        request.Headers.Authorization = authenticationHeader;
+
+	        return _client.SendAsync(request);
         }
 
         public Task<HttpResponseMessage> GetResponseAsync(string pathTemplate, NameValueCollection parameters, int retries = 0)
@@ -62,6 +111,17 @@ namespace Nrk.HttpRequester
             return GetResponseAsync(url, retries);
         }
 
+        public Task<HttpResponseMessage> GetResponseAsync(
+            string path,
+            AuthenticationHeaderValue authenticationHeader,
+            int retries = 0)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, path);
+	        request.Headers.Authorization = authenticationHeader;
+
+	        return _client.SendAsync(request);
+        }
+
         public Task<HttpResponseMessage> GetResponseAsync(string path, int retries = 0)
         {
             var urlWithParameters = UriBuilder.Build(path, _defaultQueryParameters);
@@ -72,7 +132,10 @@ namespace Nrk.HttpRequester
             return requestPolicy.ExecuteAsync(() => PerformGetRequestAsync(urlWithParameters));
         }
 
-        public Task<HttpResponseMessage> PostAsync(string path, StringContent content, AuthenticationHeaderValue authenticationHeader)
+        public Task<HttpResponseMessage> PostAsync(
+            string path,
+            StringContent content,
+            AuthenticationHeaderValue authenticationHeader)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, path);
             request.Headers.Authorization = authenticationHeader;
@@ -90,7 +153,10 @@ namespace Nrk.HttpRequester
             return _client.SendAsync(request);
         }
 
-        public Task<HttpResponseMessage> PutAsync(string path, StringContent content, AuthenticationHeaderValue authenticationHeader)
+        public Task<HttpResponseMessage> PutAsync(
+            string path,
+            StringContent content,
+            AuthenticationHeaderValue authenticationHeader)
         {
             var request = new HttpRequestMessage(HttpMethod.Put, path);
             request.Headers.Authorization = authenticationHeader;
@@ -108,7 +174,10 @@ namespace Nrk.HttpRequester
             return _client.SendAsync(request);
         }
 
-        public Task<HttpResponseMessage> DeleteAsync(string path, StringContent content, AuthenticationHeaderValue authenticationHeader)
+        public Task<HttpResponseMessage> DeleteAsync(
+            string path,
+            StringContent content,
+            AuthenticationHeaderValue authenticationHeader)
         {
             var request = new HttpRequestMessage(HttpMethod.Delete, path);
             request.Headers.Authorization = authenticationHeader;
@@ -138,7 +207,7 @@ namespace Nrk.HttpRequester
             var request = new HttpRequestMessage(HttpMethod.Put, path);
             return _client.SendAsync(request);
         }
-      
+
         public Task<HttpResponseMessage> SendMessageAsync(HttpRequestMessage request)
         {
             return _client.SendAsync(request);
