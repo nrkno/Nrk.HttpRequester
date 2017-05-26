@@ -247,6 +247,37 @@ namespace Nrk.HttpRequester.UnitTests
         }
 
         [Fact]
+        public async Task Send_WithUrlAndDefaultParameters_ShouldBuildCorrectUrl()
+        {
+            // Arrange
+            var httpClient = A.Fake<IHttpClient>();
+            var url = "test/itemName/123";
+            var defaultParams = new NameValueCollection { { "APIKey", "keyvalue" } };
+            var expectedUrl = "/test/itemName/123?APIKey=keyvalue";
+            A.CallTo(
+                    () =>
+                        httpClient.SendAsync(
+                            A<HttpRequestMessage>.Ignored))
+                .Returns(_basicResponse);
+            A.CallTo(
+                    () =>
+                        httpClient.Client)
+                .Returns(_basicClient);
+            var requester = new WebRequester(httpClient, TimeSpan.FromMilliseconds(1), defaultParams);
+
+            // Act
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            await requester.SendMessageAsyncWithRetries(request, 0);
+
+            // Assert
+            A.CallTo(
+                () =>
+                    httpClient.SendAsync(
+                        A<HttpRequestMessage>.That.Matches(req => req.RequestUri.ToString().Equals(expectedUrl)))
+            ).MustHaveHappened();
+        }
+
+        [Fact]
         public async Task GetResponseAsync_WithQueryParameterAndDefaultParameters_ShouldAppendDefaultParameters()
         {
             // Arrange
