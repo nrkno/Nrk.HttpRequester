@@ -58,7 +58,7 @@ namespace Nrk.HttpRequester.IntegrationTests
         public async Task GetResponseAsync_ShouldGetResponseFromServer()
         {
             // Act
-            var response = await _webRequester.GetResponseAsync("");
+            var response = await _webRequester.GetResponseAsync("/");
 
             // Assert
             response.IsSuccessStatusCode.ShouldBeTrue();
