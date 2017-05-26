@@ -58,7 +58,7 @@ namespace Nrk.HttpRequester.IntegrationTests
         public async Task GetResponseAsync_ShouldGetResponseFromServer()
         {
             // Act
-            var response = await _webRequester.GetResponseAsync("");
+            var response = await _webRequester.GetResponseAsync("/");
 
             // Assert
             response.IsSuccessStatusCode.ShouldBeTrue();
@@ -95,7 +95,7 @@ namespace Nrk.HttpRequester.IntegrationTests
         public async Task PutAsync_ShouldGetResponseFromServer()
         {
             // Act
-            var response = await _webRequester.PutAsync("", new StringContent("test"));
+            var response = await _webRequester.PutAsync("/", new StringContent("test"));
 
             // Assert
             response.IsSuccessStatusCode.ShouldBeTrue();
@@ -132,7 +132,7 @@ namespace Nrk.HttpRequester.IntegrationTests
         public async Task PostAsync_ShouldGetResponseFromServer()
         {
             // Act
-            var response = await _webRequester.PostAsync("", new StringContent("test"));
+            var response = await _webRequester.PostAsync("/", new StringContent("test"));
 
             // Assert
             response.IsSuccessStatusCode.ShouldBeTrue();
@@ -169,7 +169,7 @@ namespace Nrk.HttpRequester.IntegrationTests
         public async Task DeleteAsync_ShouldGetResponseFromServer()
         {
             // Act
-            var response = await _webRequester.DeleteAsync("", new StringContent("test"));
+            var response = await _webRequester.DeleteAsync("/", new StringContent("test"));
 
             // Assert
             response.IsSuccessStatusCode.ShouldBeTrue();
