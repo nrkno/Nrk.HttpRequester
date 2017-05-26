@@ -17,7 +17,7 @@ namespace Nrk.HttpRequester
         {
             _client = client;
             _retryTimeout = retryTimeout;
-            _defaultQueryParameters = defaultQueryParameters ?? new NameValueCollection{ {"lol", "hey"}};
+            _defaultQueryParameters = defaultQueryParameters ?? new NameValueCollection();
         }
 
         public WebRequester(IHttpClient client)
