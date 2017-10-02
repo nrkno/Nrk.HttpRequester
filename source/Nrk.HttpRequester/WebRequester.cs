@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -12,19 +14,43 @@ namespace Nrk.HttpRequester
         private readonly IHttpClient _client;
         private readonly TimeSpan _retryTimeout;
         private readonly NameValueCollection _defaultQueryParameters;
+        private readonly IList<Action<HttpRequestMessage>> _requestModifiers;
 
-        public WebRequester(IHttpClient client, TimeSpan retryTimeout, NameValueCollection defaultQueryParameters = null)
+        public WebRequester(IHttpClient client,
+            TimeSpan? retryTimeout = null,
+            NameValueCollection defaultQueryParameters = null,
+            IEnumerable<Action<HttpRequestMessage>> beforeRequestActions = null)
         {
             _client = client;
-            _retryTimeout = retryTimeout;
+            _retryTimeout = retryTimeout ?? TimeSpan.FromSeconds(3);
             _defaultQueryParameters = defaultQueryParameters ?? new NameValueCollection();
+            _requestModifiers = beforeRequestActions?.ToList() ?? new List<Action<HttpRequestMessage>>();
         }
 
-        public WebRequester(IHttpClient client)
+        private WebRequester CopyWith(IHttpClient client = null, TimeSpan? retryTimeout = null,
+            NameValueCollection defaultqueryParameters = null,
+            IEnumerable<Action<HttpRequestMessage>> requestModifiers = null)
         {
-            _client = client;
-            _retryTimeout = TimeSpan.FromSeconds(3);
-            _defaultQueryParameters = new NameValueCollection();
+            return new WebRequester(
+                client ?? _client,
+                retryTimeout ?? _retryTimeout,
+                defaultqueryParameters ?? _defaultQueryParameters,
+                requestModifiers ?? _requestModifiers
+            );
+        }
+
+        /// <summary>
+        /// Creates a copy of this WebRequester, with an additional requestModifier
+        /// </summary>
+        /// <param name="requestModifier">An Action for modifying the request message before send.</param>
+        /// <returns>a copy of this WebRequester, with an additional requestModifier</returns>
+        public WebRequester With(Action<HttpRequestMessage> requestModifier)
+        {
+            if (requestModifier == null)
+            {
+                throw new ArgumentNullException(nameof(requestModifier));
+            }
+            return CopyWith(requestModifiers: _requestModifiers.Concat(new[] {requestModifier}));
         }
 
         public Task<string> GetResponseAsStringAsync(
@@ -232,6 +258,10 @@ namespace Nrk.HttpRequester
 
         private void AddDefaultQueryParameters(HttpRequestMessage request)
         {
+            foreach (var action in _requestModifiers)
+            {
+                action(request);
+            }
             var currentUri = request.RequestUri;
             var path = currentUri.IsAbsoluteUri ? currentUri.PathAndQuery : currentUri.ToString();
             var pathWithDefaultQueryParameters = UriBuilder.Build(path, _defaultQueryParameters);
