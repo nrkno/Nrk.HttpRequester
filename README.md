@@ -11,7 +11,8 @@ The recommended usage of HttpClient is not to dispose it after every request. It
 A re-usable HttpClient introduces the risk of not honoring DNS changes. We try to fix this by setting the `ConnectionLeaseTimeout` for the Service Endpoint, which is by default infinite.
 
 ## Usage
-First build an IHttpClient. The fluent interface allows you to set Timeout, DefaultRequestheaders, DelegatingHandler and DelegatingHandlers for caching.:
+### Build an IHttpClient
+The fluent interface allows you to set Timeout, DefaultRequestheaders, DelegatingHandler and DelegatingHandlers for caching.:
 ```cs
 var httpClient = WebRequestHttpClientFactory
     .Configure(new Uri("www.yourBaseUrl.com"))
@@ -20,19 +21,17 @@ var httpClient = WebRequestHttpClientFactory
     .WithConnectionLeaseTimeout(60000)
     .Create();
 ```
-
-Next, new up the WebRequester:
+### New up a `WebRequester`
 ```cs
 var webRequester = new WebRequester(httpClient);
 ```
 
-The WebRequester is an immutable object. If you need a version which adds specific info on outgoing requests, this can be done with the `With(Action<HttpRequestMessage> message)` method. This returns a copy of the requester with the same configuration (including `IHttpClient`), except it may add a header, like this:
-
+`WebRequester` is an immutable object. If you need a modified version, this can be done with the `With(Action<HttpRequestMessage> message)` method. E.g:
 ```cs
 var webRequester = new WebRequester(httpClient);
 var childRequester = webRequester.With(m => m.Headers.Add("request-specific-header", "request-specific value"));
 ```
-
+`childRequester` is a copy of `webRequester` with the same configuration (including `IHttpClient`), except it adds a "request-specific-header" to every outgoing request. This is useful for request-ids and request correlation.
 
 
 The following methods are available from IWebRequester:
@@ -44,6 +43,7 @@ The following methods are available from IWebRequester:
         Task<HttpResponseMessage> GetResponseAsync(string pathTemplate, NameValueCollection parameters, int retries = 0);
 ```
 
+### Use the `WebRequester`
 You can either send a path `example/path/123` or a [URI Template](https://tools.ietf.org/html/rfc6570) string with matching parameters in a [`NameValueCollection`](https://msdn.microsoft.com/en-us/library/system.collections.specialized.namevaluecollection(v=vs.110).aspx):
 
 ```cs
