@@ -45,18 +45,18 @@ namespace Nrk.HttpRequester
             {
                 throw new ArgumentNullException(nameof(requestModifier));
             }
-            return CopyWith(beforeRequestActions: _requestModifiers.Concat(new[] {requestModifier}));
+            return CopyWith(requestModifiers: _requestModifiers.Concat(new[] {requestModifier}));
         }
 
         private WebRequester CopyWith(IHttpClient client = null, TimeSpan? retryTimeout = null,
             NameValueCollection defaultqueryParameters = null,
-            IEnumerable<Action<HttpRequestMessage>> beforeRequestActions = null)
+            IEnumerable<Action<HttpRequestMessage>> requestModifiers = null)
         {
             return new WebRequester(
                 client ?? _client,
                 retryTimeout ?? _retryTimeout,
                 defaultqueryParameters ?? _defaultQueryParameters,
-                beforeRequestActions ?? _requestModifiers
+                requestModifiers ?? _requestModifiers
                 );
         }
 
