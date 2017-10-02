@@ -14,7 +14,7 @@ namespace Nrk.HttpRequester
         private readonly IHttpClient _client;
         private readonly TimeSpan _retryTimeout;
         private readonly NameValueCollection _defaultQueryParameters;
-        private readonly IList<Action<HttpRequestMessage>> _requestModifiers = new List<Action<HttpRequestMessage>>();
+        private readonly IList<Action<HttpRequestMessage>> _requestModifiers;
 
         public WebRequester(IHttpClient client,
             TimeSpan? retryTimeout = null,
@@ -27,11 +27,16 @@ namespace Nrk.HttpRequester
             _requestModifiers = beforeRequestActions?.ToList() ?? new List<Action<HttpRequestMessage>>();
         }
 
-        public WebRequester(IHttpClient client)
+        private WebRequester CopyWith(IHttpClient client = null, TimeSpan? retryTimeout = null,
+            NameValueCollection defaultqueryParameters = null,
+            IEnumerable<Action<HttpRequestMessage>> requestModifiers = null)
         {
-            _client = client;
-            _retryTimeout = TimeSpan.FromSeconds(3);
-            _defaultQueryParameters = new NameValueCollection();
+            return new WebRequester(
+                client ?? _client,
+                retryTimeout ?? _retryTimeout,
+                defaultqueryParameters ?? _defaultQueryParameters,
+                requestModifiers ?? _requestModifiers
+            );
         }
 
         /// <summary>
@@ -46,18 +51,6 @@ namespace Nrk.HttpRequester
                 throw new ArgumentNullException(nameof(requestModifier));
             }
             return CopyWith(requestModifiers: _requestModifiers.Concat(new[] {requestModifier}));
-        }
-
-        private WebRequester CopyWith(IHttpClient client = null, TimeSpan? retryTimeout = null,
-            NameValueCollection defaultqueryParameters = null,
-            IEnumerable<Action<HttpRequestMessage>> requestModifiers = null)
-        {
-            return new WebRequester(
-                client ?? _client,
-                retryTimeout ?? _retryTimeout,
-                defaultqueryParameters ?? _defaultQueryParameters,
-                requestModifiers ?? _requestModifiers
-                );
         }
 
         public Task<string> GetResponseAsStringAsync(
