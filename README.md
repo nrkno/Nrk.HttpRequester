@@ -21,7 +21,7 @@ var httpClient = WebRequestHttpClientFactory
     .WithConnectionLeaseTimeout(60000)
     .Create();
 ```
-### New up a `WebRequester`
+### New up a WebRequester
 ```cs
 var webRequester = new WebRequester(httpClient);
 ```
@@ -34,6 +34,9 @@ var childRequester = webRequester.With(m => m.Headers.Add("request-specific-head
 `childRequester` is a copy of `webRequester` with the same configuration (including `IHttpClient`), except it adds a "request-specific-header" to every outgoing request. This is useful for request-ids and request correlation.
 
 
+
+
+### Use the WebRequester
 The following methods are available from IWebRequester:
 
 ```cs
@@ -43,7 +46,6 @@ The following methods are available from IWebRequester:
         Task<HttpResponseMessage> GetResponseAsync(string pathTemplate, NameValueCollection parameters, int retries = 0);
 ```
 
-### Use the `WebRequester`
 You can either send a path `example/path/123` or a [URI Template](https://tools.ietf.org/html/rfc6570) string with matching parameters in a [`NameValueCollection`](https://msdn.microsoft.com/en-us/library/system.collections.specialized.namevaluecollection(v=vs.110).aspx):
 
 ```cs
