@@ -11,24 +11,29 @@ The recommended usage of HttpClient is not to dispose it after every request. It
 A re-usable HttpClient introduces the risk of not honoring DNS changes. We try to fix this by setting the `ConnectionLeaseTimeout` for the Service Endpoint, which is by default infinite.
 
 ## Usage
-Set up WebRequester with baseUrl:
+First build an IHttpClient. The fluent interface allows you to set Timeout, DefaultRequestheaders, DelegatingHandler and DelegatingHandlers for caching.:
 ```cs
 var httpClient = WebRequestHttpClientFactory
     .Configure(new Uri("www.yourBaseUrl.com"))
-    .Create()
-var webRequester = new WebRequester(httpClient);
-```
-The WebRequestHttpClientFactory uses a fluent interface, which can be used to set Timeout, DefaultRequestheaders, DelegatingHandler and DelegatingHandlers for caching.
-
-```cs
-var httpClient = WebRequestHttpClientFactory
-    .Configure(new Uri("www.yourBaseUrl.com"))
-    .WithDefaultRequestHeaders(new Dictionary<string, string> {{"header", "value"}})
+    .WithDefaultRequestHeaders(new Dictionary<string, string> {{"header", "value"}}) // added to all requests
     .WithHandler(yourHandler)
     .WithConnectionLeaseTimeout(60000)
-    .Create()
+    .Create();
+```
+
+Next, new up the WebRequester:
+```cs
 var webRequester = new WebRequester(httpClient);
 ```
+
+The WebRequester is an immutable object. If you need a version which adds specific info on outgoing requests, this can be done with the `With(Action<HttpRequestMessage> message)` method. This returns a copy of the requester with the same configuration (including `IHttpClient`), except it may add a header, like this:
+
+```cs
+var webRequester = new WebRequester(httpClient);
+var childRequester = webRequester.With(m => m.Headers.Add("request-specific-header", "request-specific value"));
+```
+
+
 
 The following methods are available from IWebRequester:
 
