@@ -203,7 +203,7 @@ namespace Nrk.HttpRequester
 
         public Task<HttpResponseMessage> DeleteAsync(string path)
         {
-            var request = new HttpRequestMessage(HttpMethod.Put, path);
+            var request = new HttpRequestMessage(HttpMethod.Delete, path);
             return SendMessageAsync(request);
         }
 
