@@ -145,9 +145,9 @@ namespace Nrk.HttpRequester
                 Client = client;
             }
 
-            public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
+            public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
             {
-                return Client.SendAsync(request);
+                return await Client.SendAsync(request).ConfigureAwait(false);
             }
         }
     }
