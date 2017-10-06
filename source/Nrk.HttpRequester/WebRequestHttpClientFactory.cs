@@ -147,7 +147,7 @@ namespace Nrk.HttpRequester
 
             public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
             {
-                return await Client.SendAsync(request);
+                return await Client.SendAsync(request).ConfigureAwait(false);
             }
         }
     }
