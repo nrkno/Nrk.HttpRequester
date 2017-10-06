@@ -11,25 +11,27 @@ namespace Nrk.HttpRequester.IntegrationTests.TestServer
     {
         public ServerModule()
         {
-            Get["/"] = _ => "success";
+            Get["/get"] = _ => "success";
 
-            Put["/"] = _ => "success";
+            Put["/put"] = _ => "success";
 
-            Post["/"] = _ => "success";
+            Post["/post"] = _ => "success";
 
-            Delete["/"] = _ => "success";
+            Delete["/delete"] = _ => "success";
 
-            Put["/headers"] = _ => Response.AsJson(Request.Headers.ToArray());
+            Put["/put/headers"] = _ => Response.AsJson(Request.Headers.ToArray());
             
-            Post["/headers"] = _ => Response.AsJson(Request.Headers.ToArray());
+            Post["/post/headers"] = _ => Response.AsJson(Request.Headers.ToArray());
 
-            Delete["/headers"] = _ => Response.AsJson(Request.Headers.ToArray());
+            Delete["/delete/headers"] = _ => Response.AsJson(Request.Headers.ToArray());
 
-            Put["/content"] = _ => Request.Body.AsString();
+            Get["/get/headers"] = _ => Response.AsJson(Request.Headers.ToArray());
 
-            Post["/content"] = _ => Request.Body.AsString();
+            Put["/put/content"] = _ => Request.Body.AsString();
+
+            Post["/post/content"] = _ => Request.Body.AsString();
             
-            Delete["/content"] = _ => Request.Body.AsString();
+            Delete["/delete/content"] = _ => Request.Body.AsString();
 
             Get["/delay/{ms:int}"] = parameters =>
             {
@@ -37,11 +39,6 @@ namespace Nrk.HttpRequester.IntegrationTests.TestServer
                 return $"Finished sleeping for {parameters.ms}ms";
             };
 
-            Get["/headers"] = _ =>
-            {
-                var headers = Request.Headers.ToArray();
-                return Response.AsJson(headers);
-            };
         }
     }
 
