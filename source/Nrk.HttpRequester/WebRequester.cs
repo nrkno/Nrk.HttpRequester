@@ -39,7 +39,7 @@ namespace Nrk.HttpRequester
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
             request.Headers.Authorization = authenticationHeader;
 
-            var response = await SendMessageAsyncWithRetries(request, retries);
+            var response = await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
 
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
@@ -53,7 +53,7 @@ namespace Nrk.HttpRequester
 
             var uri = UriBuilder.Build(pathTemplate, parameters);
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
-            var response = await SendMessageAsyncWithRetries(request, retries);
+            var response = await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
 
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
@@ -64,14 +64,14 @@ namespace Nrk.HttpRequester
             var request = new HttpRequestMessage(HttpMethod.Get, path);
             request.Headers.Authorization = authenticationHeader;
 
-            var response = await SendMessageAsyncWithRetries(request, retries);
+            var response = await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
         public async Task<string> GetResponseAsStringAsync(string path, int retries = 0)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, path);
-            var response = await SendMessageAsyncWithRetries(request, retries);
+            var response = await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
             if (response == null)
             {
                 return string.Empty;
@@ -97,7 +97,7 @@ namespace Nrk.HttpRequester
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
             request.Headers.Authorization = authenticationHeader;
 
-            return await SendMessageAsyncWithRetries(request, retries); ;
+            return await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> GetResponseAsync(string pathTemplate, NameValueCollection parameters, int retries = 0)
@@ -110,7 +110,7 @@ namespace Nrk.HttpRequester
             var url = UriBuilder.Build(pathTemplate, parameters);
             var request = new HttpRequestMessage(HttpMethod.Get, url);
 
-            return await SendMessageAsyncWithRetries(request, retries);
+            return await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> GetResponseAsync(
@@ -121,14 +121,14 @@ namespace Nrk.HttpRequester
             var request = new HttpRequestMessage(HttpMethod.Get, path);
             request.Headers.Authorization = authenticationHeader;
 
-            return await SendMessageAsyncWithRetries(request, retries);
+            return await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> GetResponseAsync(string path, int retries = 0)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, path);
 
-            return await SendMessageAsyncWithRetries(request, retries);
+            return await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> PostAsync(
@@ -139,7 +139,7 @@ namespace Nrk.HttpRequester
             var request = new HttpRequestMessage(HttpMethod.Post, path);
             request.Headers.Authorization = authenticationHeader;
             request.Content = content;
-            return await SendMessageAsync(request);
+            return await SendMessageAsync(request).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> PostAsync(string path, StringContent content)
@@ -149,7 +149,7 @@ namespace Nrk.HttpRequester
                 Content = content
             };
 
-            return await SendMessageAsync(request);
+            return await SendMessageAsync(request).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> PutAsync(
@@ -160,7 +160,7 @@ namespace Nrk.HttpRequester
             var request = new HttpRequestMessage(HttpMethod.Put, path);
             request.Headers.Authorization = authenticationHeader;
             request.Content = content;
-            return await SendMessageAsync(request);
+            return await SendMessageAsync(request).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> PutAsync(string path, StringContent content)
@@ -170,7 +170,7 @@ namespace Nrk.HttpRequester
                 Content = content
             };
 
-            return await SendMessageAsync(request);
+            return await SendMessageAsync(request).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> DeleteAsync(
@@ -181,14 +181,14 @@ namespace Nrk.HttpRequester
             var request = new HttpRequestMessage(HttpMethod.Delete, path);
             request.Headers.Authorization = authenticationHeader;
             request.Content = content;
-            return await SendMessageAsync(request);
+            return await SendMessageAsync(request).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> DeleteAsync(string path, AuthenticationHeaderValue authenticationHeader)
         {
             var request = new HttpRequestMessage(HttpMethod.Delete, path);
             request.Headers.Authorization = authenticationHeader;
-            return await SendMessageAsync(request);
+            return await SendMessageAsync(request).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> DeleteAsync(string path, StringContent content)
@@ -198,19 +198,19 @@ namespace Nrk.HttpRequester
                 Content = content
             };
 
-            return await SendMessageAsync(request);
+            return await SendMessageAsync(request).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> DeleteAsync(string path)
         {
             var request = new HttpRequestMessage(HttpMethod.Delete, path);
-            return await SendMessageAsync(request);
+            return await SendMessageAsync(request).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> SendMessageAsync(HttpRequestMessage request)
         {
             AddDefaultQueryParameters(request);
-            return await _client.SendAsync(request);
+            return await _client.SendAsync(request).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> SendMessageAsyncWithRetries(HttpRequestMessage request, int retries)
@@ -220,7 +220,7 @@ namespace Nrk.HttpRequester
                 .Handle<TaskCanceledException>()
                 .WaitAndRetryAsync(retries, retryAttempt => _retryTimeout);
 
-            return await requestPolicy.ExecuteAsync(() => _client.SendAsync(request));
+            return await requestPolicy.ExecuteAsync(() => _client.SendAsync(request)).ConfigureAwait(false);
         }
 
         private void AddDefaultQueryParameters(HttpRequestMessage request)
