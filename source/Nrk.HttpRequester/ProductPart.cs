@@ -1,6 +1,6 @@
 ﻿namespace Nrk.HttpRequester
 {
-    public class ProductPart
+    internal class ProductPart
     {
         public string Product { get; set; }
         public string Version { get; set; }

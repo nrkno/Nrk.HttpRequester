@@ -3,15 +3,31 @@ using System.Net.Http.Headers;
 
 namespace Nrk.HttpRequester
 {
+    /// <summary>
+    /// Builder for User-Agent header
+    /// </summary>
     public class UserAgent
     {
         private readonly List<ProductPart> _parts = new List<ProductPart>();
 
         /// <summary>
+        /// Creates a new <code>UserAgent</code> with
+        /// product, e.g.
+        /// MyApplication
+        /// </summary>
+        /// <param name="product">e.g. MyApplication</param>
+        public UserAgent(string product)
+        {
+            Add(product);
+        }
+
+        /// <summary>
+        /// Creates a new <code>UserAgent</code> with
+        /// product/version e.g.
         /// MyApplication/1.0.0
         /// </summary>
-        /// <param name="product"></param>
-        /// <param name="version"></param>
+        /// <param name="product">e.g. MyApplication</param>
+        /// <param name="version">e.g. 1.0.0</param>
         public UserAgent(string product, string version)
         {
             Add(product, version);
@@ -19,21 +35,23 @@ namespace Nrk.HttpRequester
 
 
         /// <summary>
+        /// Creates a new <code>UserAgent</code> with
+        /// product/version (comment), e.g.
         /// MyApplication/1.0.0 (This is a comment)
         /// </summary>
-        /// <param name="product"></param>
-        /// <param name="version"></param>
-        /// <param name="comment"></param>
+        /// <param name="product">e.g. MyApplication</param>
+        /// <param name="version">e.g. 1.0.0</param>
+        /// <param name="comment">e.g. This is a comment</param>
         public UserAgent(string product, string version, string comment)
         {
             Add(product, version, comment);
         }
 
         /// <summary>
-        /// MyApplication
+        /// Adds product
         /// </summary>
-        /// <param name="product"></param>
-        /// <returns></returns>
+        /// <param name="product">e.g. MyApplication</param>
+        /// <returns>this UserAgent</returns>
         public UserAgent Add(string product)
         {
             return Add(new ProductPart
@@ -44,33 +62,33 @@ namespace Nrk.HttpRequester
 
 
         /// <summary>
-        /// MyApplication/1.0.0
+        /// Adds product/version, 
         /// </summary>
-        /// <param name="productName"></param>
-        /// <param name="version"></param>
-        /// <returns></returns>
-        public UserAgent Add(string productName, string version)
+        /// <param name="product">e.g. MyApplication</param>
+        /// <param name="version">e.g. 1.0.0</param>
+        /// <returns>this UserAgent</returns>
+        public UserAgent Add(string product, string version)
         {
             return Add(new ProductPart
             {
-                Product = productName,
+                Product = product,
                 Version = version
             });
         }
 
 
         /// <summary>
-        /// MyApplication/1.0.0 (This is a comment)
+        /// Adds product/version (comment)
         /// </summary>
-        /// <param name="productName"></param>
-        /// <param name="version"></param>
-        /// <param name="comment"></param>
+        /// <param name="product">e.g. MyApplication</param>
+        /// <param name="version">e.g. 1.0.0</param>
+        /// <param name="comment">e.g. This is a comment</param>
         /// <returns></returns>
-        public UserAgent Add(string productName, string version, string comment)
+        public UserAgent Add(string product, string version, string comment)
         {
             return Add(new ProductPart
             {
-                Product = productName,
+                Product = product,
                 Version = version,
                 Comment = comment
             });
