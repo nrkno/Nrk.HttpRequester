@@ -70,7 +70,9 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="TestData\Some.cs" />
     <Compile Include="UriBuilderTests.cs" />
+    <Compile Include="UserAgentTest.cs" />
     <Compile Include="WebRequesterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebRequestHttpClientFactoryTests.cs" />

@@ -92,6 +92,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="TestData\Some.cs" />
     <Compile Include="TestServer\Server.cs" />
     <Compile Include="WebRequesterIntegrationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

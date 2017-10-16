@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Nrk.HttpRequester
@@ -45,6 +45,7 @@ namespace Nrk.HttpRequester
     {
         private class HttpClientBuilder : IHttpClientBuilder
         {
+            private readonly UserAgent _userAgent;
             private readonly Uri _baseUrl;
             private TimeSpan? _timeout;
             private readonly List<DelegatingHandler> _handlers = new List<DelegatingHandler>();
@@ -52,11 +53,19 @@ namespace Nrk.HttpRequester
             private DelegatingHandler _cacheHandler;
             private int _connectionLeaseTimeout;
 
-            public HttpClientBuilder(Uri baseUrl)
+            public HttpClientBuilder(Uri baseUrl, UserAgent userAgent)
             {
-                if (baseUrl == null) throw new ArgumentNullException(nameof(baseUrl));
+                if (baseUrl == null)
+                {
+                    throw new ArgumentNullException(nameof(baseUrl));
+                }
+                if (userAgent == null)
+                {
+                    throw new ArgumentNullException(nameof(userAgent));
+                }
 
                 _baseUrl = baseUrl;
+                _userAgent = userAgent;
             }
 
             public IHttpClientBuilder WithTimeout(TimeSpan timeout)
@@ -124,13 +133,18 @@ namespace Nrk.HttpRequester
                     client.DefaultRequestHeaders.Add(header.Key, header.Value);
                 }
 
+                foreach (var productInfoHeaderValue in _userAgent.ToProductInfoHeaderValues())
+                {
+                    client.DefaultRequestHeaders.UserAgent.Add(productInfoHeaderValue);
+                }
+
                 return new HttpClientWrapper(client);
             }
         }
 
-        public static IHttpClientBuilder Configure(Uri baseUri)
+        public static IHttpClientBuilder Configure(Uri baseUri, UserAgent userAgent)
         {
-            return new HttpClientBuilder(baseUri);
+            return new HttpClientBuilder(baseUri, userAgent);
         }
 
         /// <summary>
