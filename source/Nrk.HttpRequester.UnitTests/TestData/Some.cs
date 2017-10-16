@@ -12,5 +12,6 @@ namespace Nrk.HttpRequester.UnitTests.TestData
 
         public static readonly UserAgent UserAgent = new UserAgent(Product, Version);
         public static readonly Uri Uri = new Uri("https://some.host");
+        public const string Framework = "MyFramework";
     }
 }

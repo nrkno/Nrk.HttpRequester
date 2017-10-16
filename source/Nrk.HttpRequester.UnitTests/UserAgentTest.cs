@@ -51,6 +51,15 @@ namespace Nrk.HttpRequester.UnitTests
             header.ShouldBe($"{Some.Product}/{Some.Version} {Some.DataCenter} {Some.MachineName}");
         }
 
+        [Fact]
+        public void Product_Version_Comment_Framework_Version_Comment()
+        {
+            var userAgent = new UserAgent(Some.Product, Some.Version, Some.Comment).Add(Some.Framework, Some.Version, Some.Comment);
+            var header = GetUserAgentHeader(userAgent);
+            _output.WriteLine(header);
+            header.ShouldBe($"{Some.Product}/{Some.Version} ({Some.Comment}) {Some.Framework}/{Some.Version} ({Some.Comment})");
+        }
+
         private static string GetUserAgentHeader(UserAgent userAgent)
         {
             var userAgentHeader = new HttpRequestMessage().Headers.UserAgent;
