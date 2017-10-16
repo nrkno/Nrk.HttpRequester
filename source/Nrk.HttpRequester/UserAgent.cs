@@ -8,7 +8,7 @@ namespace Nrk.HttpRequester
         private readonly List<ProductPart> _parts = new List<ProductPart>();
 
         /// <summary>
-        /// PsApi/1.0.0
+        /// MyApplication/1.0.0
         /// </summary>
         /// <param name="product"></param>
         /// <param name="version"></param>
@@ -19,7 +19,7 @@ namespace Nrk.HttpRequester
 
 
         /// <summary>
-        /// PsApi/1.0.0 (This is a comment)
+        /// MyApplication/1.0.0 (This is a comment)
         /// </summary>
         /// <param name="product"></param>
         /// <param name="version"></param>
@@ -30,7 +30,7 @@ namespace Nrk.HttpRequester
         }
 
         /// <summary>
-        /// PsApi
+        /// MyApplication
         /// </summary>
         /// <param name="product"></param>
         /// <returns></returns>
@@ -44,7 +44,7 @@ namespace Nrk.HttpRequester
 
 
         /// <summary>
-        /// PsApi/1.0.0
+        /// MyApplication/1.0.0
         /// </summary>
         /// <param name="productName"></param>
         /// <param name="version"></param>
@@ -60,7 +60,7 @@ namespace Nrk.HttpRequester
 
 
         /// <summary>
-        /// PsApi/1.0.0 (This is a comment)
+        /// MyApplication/1.0.0 (This is a comment)
         /// </summary>
         /// <param name="productName"></param>
         /// <param name="version"></param>

@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Owin.Hosting;
-using Nrk.HttpRequester.IntegrationTests.TestData;
 using Nrk.HttpRequester.IntegrationTests.TestServer;
 using Shouldly;
 using Xunit;
@@ -20,14 +19,14 @@ namespace Nrk.HttpRequester.IntegrationTests
         public WebRequesterIntegrationTests()
         {
             _webApp = WebApp.Start<Startup>(Url);
-            _webRequester = new WebRequester(WebRequestHttpClientFactory.Configure(new Uri(Url), Some.UserAgent).Create());
+            _webRequester = new WebRequester(WebRequestHttpClientFactory.Configure(new Uri(Url)).Create());
         }
 
         [Fact]
         public async Task GetResponseAsync_ShouldTimeoutOnSlowResponse()
         {
             // Arrange
-            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url), Some.UserAgent).WithTimeout(TimeSpan.FromMilliseconds(100)).Create();
+            var httpClient = WebRequestHttpClientFactory.Configure(new Uri(Url)).WithTimeout(TimeSpan.FromMilliseconds(100)).Create();
             var webRequester = new WebRequester(httpClient);
 
             // Act
@@ -42,7 +41,7 @@ namespace Nrk.HttpRequester.IntegrationTests
         {
             // Arrange
             var httpClient =
-                WebRequestHttpClientFactory.Configure(new Uri(Url), Some.UserAgent)
+                WebRequestHttpClientFactory.Configure(new Uri(Url))
                     .WithDefaultRequestHeaders(new Dictionary<string, string> { { "fakeHeader", "fakeValue" } })
                     .Create();
             var webRequester = new WebRequester(httpClient);

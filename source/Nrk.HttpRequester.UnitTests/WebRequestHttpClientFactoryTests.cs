@@ -13,16 +13,7 @@ namespace Nrk.HttpRequester.UnitTests
         public void Create_NullBaseUrl_ShouldThrowArgumentNullException()
         {
             // Act
-            var ex = Record.Exception(() => WebRequestHttpClientFactory.Configure(null, Some.UserAgent).Create());
-            // Assert
-            ex.ShouldBeOfType<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void Create_NullUserAgent_ShouldThrowArgumentNullException()
-        {
-            // Act
-            var ex = Record.Exception(() => WebRequestHttpClientFactory.Configure(Some.Uri, null).Create());
+            var ex = Record.Exception(() => WebRequestHttpClientFactory.Configure(null).Create());
             // Assert
             ex.ShouldBeOfType<ArgumentNullException>();
         }
@@ -35,10 +26,18 @@ namespace Nrk.HttpRequester.UnitTests
             var timeout = TimeSpan.FromSeconds(20);
 
             // Act
-            var httpClient = WebRequestHttpClientFactory.Configure(baseUri, Some.UserAgent).WithTimeout(timeout).Create();
+            var httpClient = WebRequestHttpClientFactory.Configure(baseUri).WithTimeout(timeout).Create();
 
             // Assert
             httpClient.Client.Timeout.ShouldBe(timeout);
+        }
+
+        [Fact]
+        public void Create_GivenUserAgent_SetsUserAgentHeader()
+        {
+            var client = WebRequestHttpClientFactory.Configure(Some.Uri).WithUserAgent(new UserAgent("application", "1.2.3", "With whistles and bells enabled")).Create();
+            var userAgentHeader = client.Client.DefaultRequestHeaders.UserAgent.ToString();
+            userAgentHeader.ShouldBe("application/1.2.3 (With whistles and bells enabled)");
         }
 
         [Fact]
@@ -46,7 +45,7 @@ namespace Nrk.HttpRequester.UnitTests
         {
             var baseUri = new Uri("http://fake.api.com");
             var timeout = TimeSpan.FromSeconds(20);
-            var httpClient = WebRequestHttpClientFactory.Configure(baseUri, Some.UserAgent).WithTimeout(timeout).Create();
+            var httpClient = WebRequestHttpClientFactory.Configure(baseUri).WithTimeout(timeout).Create();
             httpClient.Client.Timeout.ShouldBe(timeout);
         }
 
@@ -58,7 +57,7 @@ namespace Nrk.HttpRequester.UnitTests
             var requestHeaders = new Dictionary<string, string> { { "headerKey", "headerValue" } };
 
             // Act
-            var httpClient = WebRequestHttpClientFactory.Configure(baseUri, Some.UserAgent).WithDefaultRequestHeaders(requestHeaders).Create();
+            var httpClient = WebRequestHttpClientFactory.Configure(baseUri).WithDefaultRequestHeaders(requestHeaders).Create();
             
             // Assert
             httpClient.Client.DefaultRequestHeaders.Contains("headerKey").ShouldBeTrue();
@@ -71,7 +70,7 @@ namespace Nrk.HttpRequester.UnitTests
             var baseUri = new Uri("http://fake.api.com");
             const int oneMinute = 60 * 1000;
             // Act
-            var httpClient = WebRequestHttpClientFactory.Configure(baseUri, Some.UserAgent).WithConnectionLeaseTimeout(60*1000).Create();
+            var httpClient = WebRequestHttpClientFactory.Configure(baseUri).WithConnectionLeaseTimeout(60*1000).Create();
 
             // Assert
             var connectionLeaseTimeout = ServicePointManager.FindServicePoint(baseUri).ConnectionLeaseTimeout;
@@ -85,7 +84,7 @@ namespace Nrk.HttpRequester.UnitTests
             var baseUri = new Uri("http://fake.api.com");
             const int defaultConnectionLease = -1;
             // Act
-            var httpClient = WebRequestHttpClientFactory.Configure(baseUri, Some.UserAgent).Create();
+            var httpClient = WebRequestHttpClientFactory.Configure(baseUri).Create();
 
             // Assert
             var connectionLeaseTimeout = ServicePointManager.FindServicePoint(baseUri).ConnectionLeaseTimeout;
@@ -101,7 +100,7 @@ namespace Nrk.HttpRequester.UnitTests
 
             const int oneMinute = 60 * 1000;
             // Act
-            var httpClient = WebRequestHttpClientFactory.Configure(baseUri, Some.UserAgent).WithConnectionLeaseTimeout(60 * 1000).Create();
+            var httpClient = WebRequestHttpClientFactory.Configure(baseUri).WithConnectionLeaseTimeout(60 * 1000).Create();
 
             // Assert
             var connectionLeaseTimeout = ServicePointManager.FindServicePoint(baseUriWithPath).ConnectionLeaseTimeout;
