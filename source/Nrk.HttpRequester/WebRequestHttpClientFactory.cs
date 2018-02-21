@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace Nrk.HttpRequester
@@ -24,6 +23,11 @@ namespace Nrk.HttpRequester
         /// Sets the CacheHandler
         /// </summary>
         IHttpClientBuilder WithCacheHandler(DelegatingHandler cacheHandler);
+
+        /// <summary>
+        /// Sets a WebRequestHandler configurator
+        /// </summary>
+        IHttpClientBuilder WithRequestHandlerConfigurator(Action<WebRequestHandler> configurator);
 
         /// <summary>
         /// Sets Default HttpRequestHeaders
@@ -48,6 +52,7 @@ namespace Nrk.HttpRequester
             private readonly Uri _baseUrl;
             private TimeSpan? _timeout;
             private readonly List<DelegatingHandler> _handlers = new List<DelegatingHandler>();
+            private readonly List<Action<WebRequestHandler>> _requestHandlerConfigurators = new List<Action<WebRequestHandler>>();
             private Dictionary<string, string> _defaultHeaders;
             private DelegatingHandler _cacheHandler;
             private int _connectionLeaseTimeout;
@@ -89,6 +94,12 @@ namespace Nrk.HttpRequester
                 return this;
             }
 
+            public IHttpClientBuilder WithRequestHandlerConfigurator(Action<WebRequestHandler> configurator)
+            {
+                _requestHandlerConfigurators.Add(configurator);
+                return this;
+            }
+
             public IHttpClient Create()
             {
                 var webRequestHandler = new WebRequestHandler();
@@ -99,7 +110,8 @@ namespace Nrk.HttpRequester
 #if DEBUG
                 webRequestHandler.ServerCertificateValidationCallback = (sender, certificate, chain, errors) => true;
 #endif
-
+                _requestHandlerConfigurators.ForEach((configurator) => configurator(webRequestHandler));
+                
                 var client = _cacheHandler == null
                     ? HttpClientFactory.Create(webRequestHandler, _handlers.ToArray())
                     : HttpClientFactory.Create(_cacheHandler, _handlers.ToArray());
