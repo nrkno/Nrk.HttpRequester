@@ -54,6 +54,27 @@ namespace Nrk.HttpRequester.IntegrationTests
         }
 
         [Fact]
+        public async Task GetResponseAsync_GivenConfiguratorThatAllowsCookiesOnRequestMessage_ShouldSetExpectedHeaders()
+        {
+            // Arrange
+            var httpClient =
+                WebRequestHttpClientFactory.Configure(new Uri(Url))
+                    .WithRequestHandlerConfigurator((handler) => handler.UseCookies = false)
+                    .WithDefaultRequestHeaders(new Dictionary<string, string> { { "Cookie", "foo=bar;bar=baz" } })
+                    .Create();
+            var webRequester = new WebRequester(httpClient);
+
+            // Act
+            var headerResponse = await webRequester.GetResponseAsStringAsync("/get/headers");
+            var cookieResponse = await webRequester.GetResponseAsStringAsync("/get/cookies");
+
+            // Assert
+            headerResponse.Contains("Cookie").ShouldBeTrue();
+            headerResponse.Contains("foo=bar;bar=baz").ShouldBeTrue();
+            cookieResponse.ShouldBe("{\"foo\":\"bar\",\"bar\":\"baz\"}");
+        }
+
+        [Fact]
         public async Task GetResponseAsync_ShouldGetResponseFromServer()
         {
             // Act

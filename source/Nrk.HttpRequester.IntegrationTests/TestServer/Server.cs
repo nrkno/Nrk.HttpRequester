@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Net.Http;
 using System.Threading;
 using Nancy;
 using Nancy.Extensions;
@@ -26,6 +25,8 @@ namespace Nrk.HttpRequester.IntegrationTests.TestServer
             Delete["/delete/headers"] = _ => Response.AsJson(Request.Headers.ToArray());
 
             Get["/get/headers"] = _ => Response.AsJson(Request.Headers.ToArray());
+
+            Get["/get/cookies"] = _ => Response.AsJson(Request.Cookies);
 
             Put["/put/content"] = _ => Request.Body.AsString();
 
