@@ -42,6 +42,21 @@ namespace Nrk.HttpRequester.UnitTests
         }
 
         [Fact]
+        public async Task GetResponseAsync_WithRetriesAndCloning_ShouldRetrySendAsync()
+        {
+            // Arrange
+            var httpClient = A.Fake<IHttpClient>();
+            A.CallTo(() => httpClient.SendAsync(A<HttpRequestMessage>.Ignored)).Throws<TaskCanceledException>().NumberOfTimes(1);
+            var requester = new WebRequester(httpClient, TimeSpan.FromMilliseconds(1));
+
+            // Act
+            await requester.GetResponseAsync("/test", retries: 3, allowCloning: true);
+
+            // Assert
+            A.CallTo(() => httpClient.SendAsync(A<HttpRequestMessage>.Ignored)).MustHaveHappened(Repeated.Exactly.Times(2));
+        }
+
+        [Fact]
         public async Task GetResponseAsync_WithRetries_WithMultipleExceptions_ShouldRetrySendAsync()
         {
             // Arrange
