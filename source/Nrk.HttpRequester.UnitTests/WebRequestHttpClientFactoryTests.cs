@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using Nrk.HttpRequester.UnitTests.TestData;
 using Shouldly;
 using Xunit;
 
@@ -29,6 +30,14 @@ namespace Nrk.HttpRequester.UnitTests
 
             // Assert
             httpClient.Client.Timeout.ShouldBe(timeout);
+        }
+
+        [Fact]
+        public void Create_GivenUserAgent_SetsUserAgentHeader()
+        {
+            var client = WebRequestHttpClientFactory.Configure(Some.Uri).WithUserAgent(new UserAgent("application", "1.2.3", "With whistles and bells enabled")).Create();
+            var userAgentHeader = client.Client.DefaultRequestHeaders.UserAgent.ToString();
+            userAgentHeader.ShouldBe("application/1.2.3 (With whistles and bells enabled)");
         }
 
         [Fact]

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -8,6 +9,12 @@ namespace Nrk.HttpRequester
 {
     public interface IHttpClientBuilder
     {
+        /// <summary>
+        /// Sets User-Agent
+        /// </summary>
+        /// <returns></returns>
+        IHttpClientBuilder WithUserAgent(UserAgent userAgent);
+
         /// <summary>
         /// Sets the number of milliseconds to wait before the request times out.
         /// </summary>
@@ -49,6 +56,7 @@ namespace Nrk.HttpRequester
     {
         private class HttpClientBuilder : IHttpClientBuilder
         {
+            private UserAgent _userAgent;
             private readonly Uri _baseUrl;
             private TimeSpan? _timeout;
             private readonly List<DelegatingHandler> _handlers = new List<DelegatingHandler>();
@@ -59,9 +67,18 @@ namespace Nrk.HttpRequester
 
             public HttpClientBuilder(Uri baseUrl)
             {
-                if (baseUrl == null) throw new ArgumentNullException(nameof(baseUrl));
+                if (baseUrl == null)
+                {
+                    throw new ArgumentNullException(nameof(baseUrl));
+                }
 
                 _baseUrl = baseUrl;
+            }
+
+            public IHttpClientBuilder WithUserAgent(UserAgent userAgent)
+            {
+                _userAgent = userAgent;
+                return this;
             }
 
             public IHttpClientBuilder WithTimeout(TimeSpan timeout)
@@ -129,13 +146,15 @@ namespace Nrk.HttpRequester
                     client.Timeout = _timeout.Value;
                 }
 
-                if (_defaultHeaders == null) return new HttpClientWrapper(client);
-
-                foreach (var header in _defaultHeaders)
+                foreach (var header in _defaultHeaders ?? Enumerable.Empty<KeyValuePair<string, string>>())
                 {
                     client.DefaultRequestHeaders.Add(header.Key, header.Value);
                 }
 
+                foreach (var productInfoHeaderValue in _userAgent?.ToProductInfoHeaderValues() ?? Enumerable.Empty<ProductInfoHeaderValue>())
+                {
+                    client.DefaultRequestHeaders.UserAgent.Add(productInfoHeaderValue);
+                }
                 return new HttpClientWrapper(client);
             }
         }
