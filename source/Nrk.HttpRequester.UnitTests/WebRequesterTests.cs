@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FakeItEasy;
@@ -38,6 +39,22 @@ namespace Nrk.HttpRequester.UnitTests
 
             // Assert
             A.CallTo(() => httpClient.SendAsync(A<HttpRequestMessage>.Ignored)).MustHaveHappened(Repeated.Exactly.Times(2));
+        }
+
+        [Fact]
+        public async Task GetResponseAsync_WithRetries_WithMultipleExceptions_ShouldRetrySendAsync()
+        {
+            // Arrange
+            var httpClient = A.Fake<IHttpClient>();
+            A.CallTo(() => httpClient.SendAsync(A<HttpRequestMessage>.Ignored)).Throws<TaskCanceledException>().NumberOfTimes(2);
+            A.CallTo(() => httpClient.SendAsync(A<HttpRequestMessage>.Ignored)).Returns(new HttpResponseMessage(HttpStatusCode.BadRequest)).NumberOfTimes(1);
+            var requester = new WebRequester(httpClient, TimeSpan.FromMilliseconds(1));
+
+            // Act
+            var res = await requester.GetResponseAsync("/test", retries: 3);
+
+            // Assert
+            A.CallTo(() => httpClient.SendAsync(A<HttpRequestMessage>.Ignored)).MustHaveHappened(Repeated.Exactly.Times(4));
         }
 
         [Fact]

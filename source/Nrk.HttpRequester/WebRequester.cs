@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Polly;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Polly;
 
 namespace Nrk.HttpRequester
 {
@@ -242,12 +243,28 @@ namespace Nrk.HttpRequester
         public async Task<HttpResponseMessage> SendMessageAsyncWithRetries(HttpRequestMessage request, int retries)
         {
             AddDefaultQueryParameters(request);
+            
             var requestPolicy = Policy
-                .Handle<TaskCanceledException>()
-                .WaitAndRetryAsync(retries, retryAttempt => _retryTimeout);
+                               .Handle<TaskCanceledException>()
+                               .OrResult<HttpResponseMessage>(message => (message != null && _retryOnCode.Contains(message.StatusCode)))
+                               .WaitAndRetryAsync(retries, retryAttempt => _retryTimeout);
 
-            return await requestPolicy.ExecuteAsync(() => _client.SendAsync(request)).ConfigureAwait(false);
+            return await requestPolicy.ExecuteAsync(async () => await _client.SendAsync(request.Clone())).ConfigureAwait(false);
         }
+
+
+
+        private readonly List<HttpStatusCode> _retryOnCode = new List<HttpStatusCode>()
+        {
+            HttpStatusCode.BadGateway,
+            HttpStatusCode.Conflict,
+            HttpStatusCode.BadRequest,
+            HttpStatusCode.Forbidden,
+            HttpStatusCode.GatewayTimeout,
+            HttpStatusCode.InternalServerError,
+            HttpStatusCode.RequestTimeout,
+            HttpStatusCode.ServiceUnavailable
+        };
 
         private void AddDefaultQueryParameters(HttpRequestMessage request)
         {
