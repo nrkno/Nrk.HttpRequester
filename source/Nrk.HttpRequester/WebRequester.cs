@@ -16,27 +16,32 @@ namespace Nrk.HttpRequester
         private readonly TimeSpan _retryTimeout;
         private readonly NameValueCollection _defaultQueryParameters;
         private readonly IList<Action<HttpRequestMessage>> _requestModifiers;
+        private bool _enableCloning;
 
         public WebRequester(IHttpClient client,
             TimeSpan? retryTimeout = null,
             NameValueCollection defaultQueryParameters = null,
-            IEnumerable<Action<HttpRequestMessage>> beforeRequestActions = null)
+            IEnumerable<Action<HttpRequestMessage>> beforeRequestActions = null,
+            bool enableCloning = false)
         {
             _client = client;
             _retryTimeout = retryTimeout ?? TimeSpan.FromSeconds(3);
             _defaultQueryParameters = defaultQueryParameters ?? new NameValueCollection();
             _requestModifiers = beforeRequestActions?.ToList() ?? new List<Action<HttpRequestMessage>>();
+            _enableCloning = enableCloning;
         }
 
         private WebRequester CopyWith(IHttpClient client = null, TimeSpan? retryTimeout = null,
             NameValueCollection defaultqueryParameters = null,
-            IEnumerable<Action<HttpRequestMessage>> requestModifiers = null)
+            IEnumerable<Action<HttpRequestMessage>> requestModifiers = null,
+            bool enableCloning = false)
         {
             return new WebRequester(
                 client ?? _client,
                 retryTimeout ?? _retryTimeout,
                 defaultqueryParameters ?? _defaultQueryParameters,
-                requestModifiers ?? _requestModifiers
+                requestModifiers ?? _requestModifiers,
+                _enableCloning = enableCloning
             );
         }
 
@@ -54,7 +59,7 @@ namespace Nrk.HttpRequester
             return CopyWith(requestModifiers: _requestModifiers.Concat(new[] {requestModifier}));
         }
 
-        public async Task<string> GetResponseAsStringAsync(string pathTemplate, NameValueCollection parameters, AuthenticationHeaderValue authenticationHeader, int retries = 0, bool allowCloning = false)
+        public async Task<string> GetResponseAsStringAsync(string pathTemplate, NameValueCollection parameters, AuthenticationHeaderValue authenticationHeader, int retries = 0)
         {
             if (parameters == null)
             {
@@ -66,12 +71,12 @@ namespace Nrk.HttpRequester
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
             request.Headers.Authorization = authenticationHeader;
 
-            var response = await SendMessageAsyncWithRetries(request, retries, allowCloning).ConfigureAwait(false);
+            var response = await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
 
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
-        public async Task<string> GetResponseAsStringAsync(string pathTemplate, NameValueCollection parameters, int retries = 0, bool allowCloning = false)
+        public async Task<string> GetResponseAsStringAsync(string pathTemplate, NameValueCollection parameters, int retries = 0)
         {
             if (parameters == null)
             {
@@ -80,25 +85,25 @@ namespace Nrk.HttpRequester
 
             var uri = UriBuilder.Build(pathTemplate, parameters);
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
-            var response = await SendMessageAsyncWithRetries(request, retries, allowCloning).ConfigureAwait(false);
+            var response = await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
 
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
 
-        public async Task<string> GetResponseAsStringAsync(string path, AuthenticationHeaderValue authenticationHeader, int retries = 0, bool allowCloning = false)
+        public async Task<string> GetResponseAsStringAsync(string path, AuthenticationHeaderValue authenticationHeader, int retries = 0)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, path);
             request.Headers.Authorization = authenticationHeader;
 
-            var response = await SendMessageAsyncWithRetries(request, retries, allowCloning).ConfigureAwait(false);
+            var response = await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
-        public async Task<string> GetResponseAsStringAsync(string path, int retries = 0, bool allowCloning = false)
+        public async Task<string> GetResponseAsStringAsync(string path, int retries = 0)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, path);
-            var response = await SendMessageAsyncWithRetries(request, retries, allowCloning).ConfigureAwait(false);
+            var response = await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
             if (response == null)
             {
                 return string.Empty;
@@ -112,8 +117,7 @@ namespace Nrk.HttpRequester
             string pathTemplate,
             NameValueCollection parameters,
             AuthenticationHeaderValue authenticationHeader,
-            int retries = 0,
-            bool allowCloning = false)
+            int retries = 0)
         {
             if (parameters == null)
             {
@@ -125,10 +129,10 @@ namespace Nrk.HttpRequester
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
             request.Headers.Authorization = authenticationHeader;
 
-            return await SendMessageAsyncWithRetries(request, retries, allowCloning).ConfigureAwait(false);
+            return await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
         }
 
-        public async Task<HttpResponseMessage> GetResponseAsync(string pathTemplate, NameValueCollection parameters, int retries = 0, bool allowCloning = false)
+        public async Task<HttpResponseMessage> GetResponseAsync(string pathTemplate, NameValueCollection parameters, int retries = 0)
         {
             if (parameters == null)
             {
@@ -138,26 +142,25 @@ namespace Nrk.HttpRequester
             var url = UriBuilder.Build(pathTemplate, parameters);
             var request = new HttpRequestMessage(HttpMethod.Get, url);
 
-            return await SendMessageAsyncWithRetries(request, retries, allowCloning).ConfigureAwait(false);
+            return await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> GetResponseAsync(
             string path,
             AuthenticationHeaderValue authenticationHeader,
-            int retries = 0,
-            bool allowCloning = false)
+            int retries = 0)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, path);
             request.Headers.Authorization = authenticationHeader;
 
-            return await SendMessageAsyncWithRetries(request, retries, allowCloning).ConfigureAwait(false);
+            return await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
         }
 
-        public async Task<HttpResponseMessage> GetResponseAsync(string path, int retries = 0, bool allowCloning = false)
+        public async Task<HttpResponseMessage> GetResponseAsync(string path, int retries = 0)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, path);
 
-            return await SendMessageAsyncWithRetries(request, retries, allowCloning).ConfigureAwait(false);
+            return await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> PostAsync(
@@ -242,11 +245,11 @@ namespace Nrk.HttpRequester
             return await _client.SendAsync(request).ConfigureAwait(false);
         }
 
-        public async Task<HttpResponseMessage> SendMessageAsyncWithRetries(HttpRequestMessage request, int retries, bool allowCloning = false)
+        public async Task<HttpResponseMessage> SendMessageAsyncWithRetries(HttpRequestMessage request, int retries)
         {
             AddDefaultQueryParameters(request);
 
-            var function = allowCloning ? new Func<Task<HttpResponseMessage>>(async () => await _client.SendAsync(request.Clone())) : new Func<Task<HttpResponseMessage>>(async () => await _client.SendAsync(request));
+            var function = _enableCloning ? new Func<Task<HttpResponseMessage>>(async () => await _client.SendAsync(request.Clone())) : new Func<Task<HttpResponseMessage>>(async () => await _client.SendAsync(request));
 
             var requestPolicy = Policy
                                .Handle<TaskCanceledException>()
