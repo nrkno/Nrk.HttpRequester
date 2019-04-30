@@ -15,8 +15,8 @@ namespace Nrk.HttpRequester.UnitTests
 
         public WebRequesterTests()
         {
-            var baseAdress = new Uri("http://baseadress.com");
-            var client = new HttpClient { BaseAddress = baseAdress };
+            var baseAddress = new Uri("http://baseadress.com");
+            var client = new HttpClient { BaseAddress = baseAddress };
 
             _basicClient = client;
             _basicResponse = new HttpResponseMessage
