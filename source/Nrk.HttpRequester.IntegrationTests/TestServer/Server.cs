@@ -1,8 +1,9 @@
-﻿using System.Linq;
-using System.Threading;
-using Nancy;
-using Nancy.Extensions;
+﻿using Nancy;
 using Owin;
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading;
 
 namespace Nrk.HttpRequester.IntegrationTests.TestServer
 {
@@ -10,35 +11,36 @@ namespace Nrk.HttpRequester.IntegrationTests.TestServer
     {
         public ServerModule()
         {
-            Get["/get"] = _ => "success";
 
-            Put["/put"] = _ => "success";
+            Get("/get", args => "success");
 
-            Post["/post"] = _ => "success";
+            Put("/put", args => "success");
 
-            Delete["/delete"] = _ => "success";
+            Post("/post", args => "success");
 
-            Put["/put/headers"] = _ => Response.AsJson(Request.Headers.ToArray());
-            
-            Post["/post/headers"] = _ => Response.AsJson(Request.Headers.ToArray());
+            Delete("/delete", args => "success");
 
-            Delete["/delete/headers"] = _ => Response.AsJson(Request.Headers.ToArray());
+            Put("/put/headers", args => Response.AsJson(Request.Headers.ToArray()));
 
-            Get["/get/headers"] = _ => Response.AsJson(Request.Headers.ToArray());
+            Post("/post/headers", args => Response.AsJson(Request.Headers.ToArray()));
 
-            Get["/get/cookies"] = _ => Response.AsJson(Request.Cookies);
+            Delete("/delete/headers", args => Response.AsJson(Request.Headers.ToArray()));
 
-            Put["/put/content"] = _ => Request.Body.AsString();
+            Get("/get/headers", args => Response.AsJson(Request.Headers.ToArray()));
 
-            Post["/post/content"] = _ => Request.Body.AsString();
-            
-            Delete["/delete/content"] = _ => Request.Body.AsString();
+            Get("/get/cookies", args => Response.AsJson(Request.Cookies));
 
-            Get["/delay/{ms:int}"] = parameters =>
+            Put("/put/content", args => new StreamReader(Request.Body).ReadToEnd());
+
+            Post("/post/content", args => new StreamReader(Request.Body).ReadToEnd());
+
+            Delete("/delete/content", args => new StreamReader(Request.Body).ReadToEnd());
+
+            Get("/delay/{ms:int}", args =>
             {
-                Thread.Sleep(parameters.ms);
-                return $"Finished sleeping for {parameters.ms}ms";
-            };
+                Thread.Sleep(TimeSpan.FromMilliseconds(args.ms));
+                return $"Finished sleeping for {args.ms}ms";
+            });
 
         }
     }
