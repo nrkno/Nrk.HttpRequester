@@ -26,36 +26,6 @@ namespace Nrk.HttpRequester.UnitTests
         }
 
         [Fact]
-        public async Task GetResponseAsync_WithRetries_ShouldRetrySendAsync()
-        {
-            // Arrange
-            var httpClient = A.Fake<IHttpClient>();
-            A.CallTo(() => httpClient.SendAsync(A<HttpRequestMessage>.Ignored)).Throws<TaskCanceledException>().NumberOfTimes(1);
-            var requester = new WebRequester(httpClient, TimeSpan.FromMilliseconds(1));
-
-            // Act
-            await requester.GetResponseAsync("/test", retries: 3);
-
-            // Assert
-            A.CallTo(() => httpClient.SendAsync(A<HttpRequestMessage>.Ignored)).MustHaveHappened(Repeated.Exactly.Times(2));
-        }
-
-        [Fact]
-        public async Task GetResponseAsync_WithRetries_ShouldOnlyRetryGivenAmountOfTimes()
-        {
-            // Arrange
-            var httpClient = A.Fake<IHttpClient>();
-            A.CallTo(() => httpClient.SendAsync(A<HttpRequestMessage>.Ignored)).Throws<TaskCanceledException>();
-            var requester = new WebRequester(httpClient, TimeSpan.FromMilliseconds(1));
-
-            // Act
-            var ex = await Record.ExceptionAsync(async () => { await requester.GetResponseAsync("/test", retries: 3); });
-
-            // Assert
-            ex.ShouldBeOfType<TaskCanceledException>();
-        }
-
-        [Fact]
         public async Task GetResponseAsStringAsync_NullResponse_ShouldReturnEmptyString()
         {
             // Arrange
@@ -105,7 +75,7 @@ namespace Nrk.HttpRequester.UnitTests
             var requester = new WebRequester(httpClient);
 
             // Act
-            var ex = await Record.ExceptionAsync(async () => { await requester.GetResponseAsync("/test", null, null, 0); });
+            var ex = await Record.ExceptionAsync(async () => { await requester.GetResponseAsync("/test", null, null); });
 
             // Assert
             ex.ShouldBeOfType<ArgumentNullException>();
@@ -119,7 +89,7 @@ namespace Nrk.HttpRequester.UnitTests
             var requester = new WebRequester(httpClient);
 
             // Act
-            var ex = await Record.ExceptionAsync(async () => { await requester.GetResponseAsStringAsync("/test", null, null, 0); });
+            var ex = await Record.ExceptionAsync(async () => { await requester.GetResponseAsStringAsync("/test", null, null); });
 
             // Assert
             ex.ShouldBeOfType<ArgumentNullException>();
@@ -203,7 +173,7 @@ namespace Nrk.HttpRequester.UnitTests
                     () =>
                         httpClient.Client)
                 .Returns(_basicClient);
-            var requester = new WebRequester(httpClient, TimeSpan.FromMilliseconds(1), defaultParams);
+            var requester = new WebRequester(httpClient, defaultParams);
 
             // Act
             await requester.GetResponseAsync(template, parameters);
@@ -233,7 +203,7 @@ namespace Nrk.HttpRequester.UnitTests
                     () =>
                         httpClient.Client)
                 .Returns(_basicClient);
-            var requester = new WebRequester(httpClient, TimeSpan.FromMilliseconds(1), defaultParams);
+            var requester = new WebRequester(httpClient, defaultParams);
 
             // Act
             await requester.GetResponseAsync(url);
@@ -263,11 +233,11 @@ namespace Nrk.HttpRequester.UnitTests
                     () =>
                         httpClient.Client)
                 .Returns(_basicClient);
-            var requester = new WebRequester(httpClient, TimeSpan.FromMilliseconds(1), defaultParams);
+            var requester = new WebRequester(httpClient, defaultParams);
 
             // Act
             var request = new HttpRequestMessage(HttpMethod.Get, url);
-            await requester.SendMessageAsyncWithRetries(request, 0);
+            await requester.SendMessageAsync(request);
 
             // Assert
             A.CallTo(
@@ -294,7 +264,7 @@ namespace Nrk.HttpRequester.UnitTests
                     () =>
                         httpClient.Client)
                 .Returns(_basicClient);
-            var requester = new WebRequester(httpClient, TimeSpan.FromMilliseconds(1), defaultParams);
+            var requester = new WebRequester(httpClient, defaultParams);
 
             // Act
             await requester.GetResponseAsync(url);
@@ -306,5 +276,6 @@ namespace Nrk.HttpRequester.UnitTests
                         A<HttpRequestMessage>.That.Matches(req => req.RequestUri.ToString().Equals(expectedUrl)))
             ).MustHaveHappened();
         }
+
     }
 }

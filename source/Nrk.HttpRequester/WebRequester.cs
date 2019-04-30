@@ -5,24 +5,20 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Polly;
 
 namespace Nrk.HttpRequester
 {
     public class WebRequester : IWebRequester
     {
         private readonly IHttpClient _client;
-        private readonly TimeSpan _retryTimeout;
         private readonly NameValueCollection _defaultQueryParameters;
         private readonly IList<Action<HttpRequestMessage>> _requestModifiers;
 
         public WebRequester(IHttpClient client,
-            TimeSpan? retryTimeout = null,
             NameValueCollection defaultQueryParameters = null,
             IEnumerable<Action<HttpRequestMessage>> beforeRequestActions = null)
         {
             _client = client;
-            _retryTimeout = retryTimeout ?? TimeSpan.FromSeconds(3);
             _defaultQueryParameters = defaultQueryParameters ?? new NameValueCollection();
             _requestModifiers = beforeRequestActions?.ToList() ?? new List<Action<HttpRequestMessage>>();
         }
@@ -33,7 +29,6 @@ namespace Nrk.HttpRequester
         {
             return new WebRequester(
                 client ?? _client,
-                retryTimeout ?? _retryTimeout,
                 defaultqueryParameters ?? _defaultQueryParameters,
                 requestModifiers ?? _requestModifiers
             );
@@ -53,7 +48,7 @@ namespace Nrk.HttpRequester
             return CopyWith(requestModifiers: _requestModifiers.Concat(new[] {requestModifier}));
         }
 
-        public async Task<string> GetResponseAsStringAsync(string pathTemplate, NameValueCollection parameters, AuthenticationHeaderValue authenticationHeader, int retries = 0)
+        public async Task<string> GetResponseAsStringAsync(string pathTemplate, NameValueCollection parameters, AuthenticationHeaderValue authenticationHeader)
         {
             if (parameters == null)
             {
@@ -65,12 +60,12 @@ namespace Nrk.HttpRequester
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
             request.Headers.Authorization = authenticationHeader;
 
-            var response = await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
+            var response = await SendMessageAsync(request).ConfigureAwait(false);
 
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
-        public async Task<string> GetResponseAsStringAsync(string pathTemplate, NameValueCollection parameters, int retries = 0)
+        public async Task<string> GetResponseAsStringAsync(string pathTemplate, NameValueCollection parameters)
         {
             if (parameters == null)
             {
@@ -79,25 +74,25 @@ namespace Nrk.HttpRequester
 
             var uri = UriBuilder.Build(pathTemplate, parameters);
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
-            var response = await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
+            var response = await SendMessageAsync(request).ConfigureAwait(false);
 
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
 
-        public async Task<string> GetResponseAsStringAsync(string path, AuthenticationHeaderValue authenticationHeader, int retries = 0)
+        public async Task<string> GetResponseAsStringAsync(string path, AuthenticationHeaderValue authenticationHeader)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, path);
             request.Headers.Authorization = authenticationHeader;
 
-            var response = await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
+            var response = await SendMessageAsync(request).ConfigureAwait(false);
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
-        public async Task<string> GetResponseAsStringAsync(string path, int retries = 0)
+        public async Task<string> GetResponseAsStringAsync(string path)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, path);
-            var response = await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
+            var response = await SendMessageAsync(request).ConfigureAwait(false);
             if (response == null)
             {
                 return string.Empty;
@@ -110,8 +105,7 @@ namespace Nrk.HttpRequester
         public async Task<HttpResponseMessage> GetResponseAsync(
             string pathTemplate,
             NameValueCollection parameters,
-            AuthenticationHeaderValue authenticationHeader,
-            int retries = 0)
+            AuthenticationHeaderValue authenticationHeader)
         {
             if (parameters == null)
             {
@@ -123,10 +117,10 @@ namespace Nrk.HttpRequester
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
             request.Headers.Authorization = authenticationHeader;
 
-            return await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
+            return await SendMessageAsync(request).ConfigureAwait(false);
         }
 
-        public async Task<HttpResponseMessage> GetResponseAsync(string pathTemplate, NameValueCollection parameters, int retries = 0)
+        public async Task<HttpResponseMessage> GetResponseAsync(string pathTemplate, NameValueCollection parameters)
         {
             if (parameters == null)
             {
@@ -136,25 +130,24 @@ namespace Nrk.HttpRequester
             var url = UriBuilder.Build(pathTemplate, parameters);
             var request = new HttpRequestMessage(HttpMethod.Get, url);
 
-            return await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
+            return await SendMessageAsync(request).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> GetResponseAsync(
             string path,
-            AuthenticationHeaderValue authenticationHeader,
-            int retries = 0)
+            AuthenticationHeaderValue authenticationHeader)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, path);
             request.Headers.Authorization = authenticationHeader;
 
-            return await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
+            return await SendMessageAsync(request).ConfigureAwait(false);
         }
 
-        public async Task<HttpResponseMessage> GetResponseAsync(string path, int retries = 0)
+        public async Task<HttpResponseMessage> GetResponseAsync(string path)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, path);
 
-            return await SendMessageAsyncWithRetries(request, retries).ConfigureAwait(false);
+            return await SendMessageAsync(request).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> PostAsync(
@@ -237,16 +230,6 @@ namespace Nrk.HttpRequester
         {
             AddDefaultQueryParameters(request);
             return await _client.SendAsync(request).ConfigureAwait(false);
-        }
-
-        public async Task<HttpResponseMessage> SendMessageAsyncWithRetries(HttpRequestMessage request, int retries)
-        {
-            AddDefaultQueryParameters(request);
-            var requestPolicy = Policy
-                .Handle<TaskCanceledException>()
-                .WaitAndRetryAsync(retries, retryAttempt => _retryTimeout);
-
-            return await requestPolicy.ExecuteAsync(() => _client.SendAsync(request)).ConfigureAwait(false);
         }
 
         private void AddDefaultQueryParameters(HttpRequestMessage request)
