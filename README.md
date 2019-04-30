@@ -40,10 +40,10 @@ var childRequester = webRequester.With(m => m.Headers.Add("request-specific-head
 The following methods are available from IWebRequester:
 
 ```cs
-        Task<string> GetResponseAsStringAsync(string url, int retries = 0);
-        Task<string> GetResponseAsStringAsync(string pathTemplate, NameValueCollection parameters, int retries = 0);
-        Task<HttpResponseMessage> GetResponseAsync(string url, int retries = 0);
-        Task<HttpResponseMessage> GetResponseAsync(string pathTemplate, NameValueCollection parameters, int retries = 0);
+        Task<string> GetResponseAsStringAsync(string url);
+        Task<string> GetResponseAsStringAsync(string pathTemplate, NameValueCollection parameters);
+        Task<HttpResponseMessage> GetResponseAsync(string url);
+        Task<HttpResponseMessage> GetResponseAsync(string pathTemplate, NameValueCollection parameters);
 ```
 
 You can either send a path `example/path/123` or a [URI Template](https://tools.ietf.org/html/rfc6570) string with matching parameters in a [`NameValueCollection`](https://msdn.microsoft.com/en-us/library/system.collections.specialized.namevaluecollection(v=vs.110).aspx):
