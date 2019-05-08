@@ -64,8 +64,7 @@ Target "CreateNugetPackage" (fun _ ->
       WorkingDir = buildDir
       Publish = false
       Dependencies =
-        ["Polly", GetPackageVersion "./source/packages/" "Polly"
-         "Microsoft.AspNet.WebApi.Client", GetPackageVersion "./source/packages/" "Microsoft.AspNet.WebApi.Client"]
+        ["Microsoft.AspNet.WebApi.Client", GetPackageVersion "./source/packages/" "Microsoft.AspNet.WebApi.Client"]
       Files =
         [(@"Nrk.HttpRequester.dll", Some @"lib\net45", None)
          (@"Nrk.HttpRequester.pdb", Some @"lib\net45", None)]

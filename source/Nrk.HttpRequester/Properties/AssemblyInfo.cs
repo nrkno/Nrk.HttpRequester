@@ -5,20 +5,20 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitleAttribute("NRK.HttpRequester")]
 [assembly: AssemblyProductAttribute("NRK.HttpRequester")]
 [assembly: AssemblyDescriptionAttribute("Library for sending Http Requests, including a fluent interface for creating HttpClient instances")]
-[assembly: AssemblyVersionAttribute("1.0.0")]
-[assembly: AssemblyInformationalVersionAttribute("1.0.0")]
-[assembly: AssemblyFileVersionAttribute("1.0.0")]
+[assembly: AssemblyVersionAttribute("0.0.0")]
+[assembly: AssemblyInformationalVersionAttribute("0.0.0")]
+[assembly: AssemblyFileVersionAttribute("0.0.0")]
 [assembly: GuidAttribute("d51e7a23-73d5-49a1-be63-f73e432e9ab3")]
-[assembly: AssemblyMetadataAttribute("githash","df607ccdd20d7d6946fc93bc382c4734a81a3be5")]
+[assembly: AssemblyMetadataAttribute("githash","aa592ae678d73066d8936e67b3386a2011f252f4")]
 namespace System {
     internal static class AssemblyVersionInformation {
         internal const System.String AssemblyTitle = "NRK.HttpRequester";
         internal const System.String AssemblyProduct = "NRK.HttpRequester";
         internal const System.String AssemblyDescription = "Library for sending Http Requests, including a fluent interface for creating HttpClient instances";
-        internal const System.String AssemblyVersion = "1.0.0";
-        internal const System.String AssemblyInformationalVersion = "1.0.0";
-        internal const System.String AssemblyFileVersion = "1.0.0";
+        internal const System.String AssemblyVersion = "0.0.0";
+        internal const System.String AssemblyInformationalVersion = "0.0.0";
+        internal const System.String AssemblyFileVersion = "0.0.0";
         internal const System.String Guid = "d51e7a23-73d5-49a1-be63-f73e432e9ab3";
-        internal const System.String AssemblyMetadata_githash = "df607ccdd20d7d6946fc93bc382c4734a81a3be5";
+        internal const System.String AssemblyMetadata_githash = "aa592ae678d73066d8936e67b3386a2011f252f4";
     }
 }

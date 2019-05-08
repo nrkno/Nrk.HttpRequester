@@ -7,14 +7,14 @@ namespace Nrk.HttpRequester
 {
     public interface IWebRequester
     {
-        Task<string> GetResponseAsStringAsync(string path, AuthenticationHeaderValue authenticationHeader, int retries = 0);
-        Task<string> GetResponseAsStringAsync(string path, int retries = 0);
-        Task<string> GetResponseAsStringAsync(string pathTemplate, NameValueCollection parameters, AuthenticationHeaderValue authenticationHeader, int retries = 0);
-        Task<string> GetResponseAsStringAsync(string pathTemplate, NameValueCollection parameters, int retries = 0);
-        Task<HttpResponseMessage> GetResponseAsync(string path, AuthenticationHeaderValue authenticationHeader, int retries = 0);
-	    Task<HttpResponseMessage> GetResponseAsync(string path, int retries = 0);
-        Task<HttpResponseMessage> GetResponseAsync(string pathTemplate, NameValueCollection parameters, AuthenticationHeaderValue authenticationHeader, int retries = 0);
-        Task<HttpResponseMessage> GetResponseAsync(string pathTemplate, NameValueCollection parameters, int retries = 0);
+        Task<string> GetResponseAsStringAsync(string path, AuthenticationHeaderValue authenticationHeader);
+        Task<string> GetResponseAsStringAsync(string path);
+        Task<string> GetResponseAsStringAsync(string pathTemplate, NameValueCollection parameters, AuthenticationHeaderValue authenticationHeader);
+        Task<string> GetResponseAsStringAsync(string pathTemplate, NameValueCollection parameters);
+        Task<HttpResponseMessage> GetResponseAsync(string path, AuthenticationHeaderValue authenticationHeader);
+	    Task<HttpResponseMessage> GetResponseAsync(string path);
+        Task<HttpResponseMessage> GetResponseAsync(string pathTemplate, NameValueCollection parameters, AuthenticationHeaderValue authenticationHeader);
+        Task<HttpResponseMessage> GetResponseAsync(string pathTemplate, NameValueCollection parameters);
         Task<HttpResponseMessage> PostAsync(string path, StringContent content, AuthenticationHeaderValue authenticationHeader);
         Task<HttpResponseMessage> PostAsync(string path, StringContent content);
         Task<HttpResponseMessage> PutAsync(string path, StringContent content, AuthenticationHeaderValue authenticationHeader);
@@ -28,7 +28,6 @@ namespace Nrk.HttpRequester
         /// Direct access to underlying http client
         /// </summary>
         Task<HttpResponseMessage> SendMessageAsync(HttpRequestMessage request);
-        Task<HttpResponseMessage> SendMessageAsyncWithRetries(HttpRequestMessage request, int retries);
     }
 
 
